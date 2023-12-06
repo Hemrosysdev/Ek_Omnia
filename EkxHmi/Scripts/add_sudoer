@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ ! -e /etc/sudoers.d/www-data ];
+then
+	unlockrfs
+	mkdir /etc/sudoers.d
+	echo "www-data ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/www-data
+fi
+

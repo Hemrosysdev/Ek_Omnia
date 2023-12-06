@@ -1,0 +1,11 @@
+Package: hemro-ek-omnia-hmi-demonstrator-amd64
+Architecture: amd64
+Maintainer: Gerd Esser <gesser@ultratronik.de>
+Depends: $DEPENDS
+Priority: optional
+Replaces: hemro-ek-omnia-hmi-demonstrator-amd64,hemro-ekx-hmi-demonstrator-amd64
+Section: devel
+Version: $VERSION_NO
+Homepage: http://www.ultratronik.de
+Description: HEMRO EK Omnia HMI Demonstrator tool
+ Tool to demonstrate HMI function on Linux host systems.

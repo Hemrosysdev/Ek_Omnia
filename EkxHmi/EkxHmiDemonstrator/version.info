@@ -1,0 +1,61 @@
+[VersionId]
+Component=EkOmniaHmiDemonstrator
+VersionNo=01.47
+VersionDate=30.05.2023
+DevState=SprintNo12Results
+
+[Source]
+Company=Ultratronik GmbH
+Location=Gilching, Germany
+Project=Hemro EKX
+
+[History]
+01.47=30.05.2023;Sprint #12 results
+01.46=23.05.2023;Adaption of brightness to new MMI 640 platform
+01.45=10.05.2023;Switch from socket based to UART protocol
+01.44=28.04.2023;Integration of ADC/DMA read for analog DDD
+01.43=24.04.2023;remove lock files for Windows
+01.42=17.04.2023;Crosschecking whether all DB events are generated
+01.41=13.04.2023;Results of sprint #10
+01.40=12.04.2023;HEKX-1028: reduce database accesses
+01.39=12.04.2023;HEKX-1027: suppress unwanted ERROR_GONE entries in DB
+01.38=11.04.2023;HEKX-711, HEKX-710: insert AGSA and PDU fault pin detection
+01.37=28.03.2023;Insert new AGSA test only for steps
+01.36=23.03.2023;Results for sprint #9 review
+01.35=16.03.2023;Rework of new library mode
+01.34=07.03.2023;HEKX-981: insert new user passwords
+01.33=06.03.2023;insert key P to toggle PDU
+01.32=02.03.2023;HEKX-676: fine tuning overlay with tap function
+01.31=01.03.2023;HEKX-963: remove hmi temperature driver
+01.30=01.03.2023;restructure of AgsaControl
+01.29=26.02.2023;severe create() restructure
+01.28=24.02.2023;HEKX-969: new AGSA long term test
+01.27=22.02.2023;HEKX-968: open notification center for all
+01.26=21.02.2023;HEKX-862: bug fix WiFi password not stored
+01.25=17.02.2023;HEKX-702: Insert file locking
+01.24=16.02.2023;HEKX-915, insert queued recover actions
+01.23=14.02.2023;HEKX-728, consider edit mode to stop AGSA movement
+01.22=13.02.2023;HEKX-916, PDU run time integration
+01.21=13.02.2023;new acknowledge protocol HMI/ESP
+01.20=09.01.2023;insert new c400 images
+01.19=05.01.2023;insert c400 DDD variant
+01.18=08.12.2022;HEKX-704: insert notifications recover functions
+01.17=08.12.2022;modify errors to notifications
+01.16=04.12.2022;HEKX-695: Insert PDU motor test
+01.15=15.11.2022;HEKX-228: Rework von Role Login
+01.14=15.11.2022;HEKX-732: remove shadow on DDD top line in library mode, making it static
+01.13=15.11.2022;HEKX-724: system on time and standby not counted in database
+01.12=14.11.2022;HEKX-735, HEKX-725: insert MCU config parameters into config menu
+01.11=26.10.2022;HEKX-694: Bug fix, impossible download of AGSA long duration test logs
+01.10=20.09.2022;HEKX-701: WiFi activated permanentely
+01.09=19.09.2022;HEKX-706: MCU failed check reintegrated
+01.08=16.09.2022;HEKX-610, 698: Sprint #2 review refinement
+01.07=15.09.2022;HEKX-656: insert leave WiFi pw dialog when no change existing
+01.06=13.09.2022;HEKX-656: insert WiFi password check
+01.05=06.09.2022;HEKX-610: insert timeout for exit of settings mode
+01.04=05.09.2022;insert AGSA fine adjustment
+01.03=17.04.2022;insert motor test page and notification center
+01.02=27.01.2022;update to new scaling from EkxUI and inserting new glas lense
+01.01=19.05.2021;Update to Sprint#19 development state
+01.00=09.04.2021;First release for Hemro
+00.01=05.04.2021;Project initialization

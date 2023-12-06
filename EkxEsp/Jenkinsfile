@@ -1,0 +1,127 @@
+def esp_version = ""
+def ESP_ARCHIVE = "HEM-Hemro/HEM-EKX-S01/HEM-EKX-ESP"
+
+def UxChatNotify( String chan = '' )
+{
+	def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'warning', 'ABORTED': '#808080']
+	def STATUS_MAP = ['SUCCESS': 'Success', 'FAILURE': 'Failed', 'UNSTABLE': 'Unstable', 'ABORTED': 'Aborted']
+	slackSend	channel: chan,
+				color: COLOR_MAP[currentBuild.currentResult],
+				message: "${env.JOB_NAME} - #${env.BUILD_NUMBER}: " + STATUS_MAP[currentBuild.currentResult] + " - <${env.BUILD_URL}|Open Jenkins Build>"
+}
+
+pipeline 
+{
+	agent any
+	triggers { pollSCM( 'H * * * *' ) }
+
+	options 
+	{
+		disableConcurrentBuilds()
+		buildDiscarder(	logRotator(	artifactDaysToKeepStr: '', 
+									artifactNumToKeepStr: '10', 
+									daysToKeepStr: '60', 
+									numToKeepStr: '60' ) )
+		checkoutToSubdirectory( 'ProjectDir' )
+	}
+
+	environment 
+	{
+		UX_ESP32_CPP_LIB_TAG = sh( returnStdout: true, script: 'cat ProjectDir/version.info | sed -n -E "s/UxEsp32CppLibTag=(.+)$/\\1/p"' )
+	}
+
+	stages 
+	{
+		stage('Checkout')
+		{
+			steps
+			{
+				checkout([$class: 'GitSCM', 
+							branches: [[name: env.UX_ESP32_CPP_LIB_TAG ]],
+							extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'UX-EES-ESP32CPPLIB']],
+							userRemoteConfigs: [[credentialsId: 'git', url: 'ssh://git@ux-git.u-experten.de:224/Ux-Eco/UX-MOVE-E/UX-EES-ESP32CPPLIB.git']]])
+			}
+		}
+
+		stage('Build') 
+		{
+			agent
+			{
+				dockerfile 
+				{
+					dir 'ProjectDir'
+					reuseNode true
+				}
+			}
+			
+			steps 
+			{
+				sh 'cd ProjectDir;make clean;rm sdkconfig;BUILD_NO=${BUILD_NUMBER} CURRENT_BRANCH=${BRANCH_NAME} make all'
+				echo "Generating the delivery package."
+				sh "rm -rf ./build;cd ProjectDir;BUILD_NO=${BUILD_NUMBER} CURRENT_BRANCH=${BRANCH_NAME} make delivery;mv build .."
+				sh "rm -rf artefacts;mkdir -p artefacts/HEM-EKX-EspFirmware;cp build/HEM-EKX-EspFirmware*.bin artefacts/HEM-EKX-EspFirmware;cp build/EspFirmwareConfig.json artefacts/HEM-EKX-EspFirmware;cd artefacts/HEM-EKX-EspFirmware;tar -czvf ../HEM-EKX-EspFirmware.tar.gz *;cd ..;rm -rf HEM-EKX-EspFirmware"
+				sh "cp build/*.zip artefacts;rm -rf build"
+			}
+		}
+
+		stage('Archive') 
+		{
+			steps 
+			{
+				archiveArtifacts artifacts: "artefacts/*", fingerprint: true, onlyIfSuccessful: true
+			}
+		}
+		
+		stage('Artifactory') 
+		{
+			when { branch "master" }
+			steps 
+			{
+				script 
+				{
+					esp_version = sh (script: "grep VersionNo ProjectDir/version.info | cut -d '=' -f2", returnStdout: true).trim();
+				}
+				
+				rtUpload (
+					serverId: 'UX_ARTIFACTORY',
+					buildName: "HEM-EKX-ESP",
+					spec: """{"files": [
+										{
+											"pattern": "artefacts/*",
+											"target": "dev-projects-snapshot/${ESP_ARCHIVE}/V${esp_version}/${BUILD_NUMBER}/",
+											"recursive": "false"
+										}
+									]}"""
+				)
+				
+				rtUpload (
+					serverId: 'UX_ARTIFACTORY',
+					buildName: "HEM-EKX-ESP",
+					spec: """{"files": [
+										{
+											"pattern": "artefacts/*",
+											"target": "dev-projects-snapshot/${ESP_ARCHIVE}/latest/",
+											"recursive": "false"
+										}
+									]}"""
+				)
+				
+				rtPublishBuildInfo (
+						serverId: "UX_ARTIFACTORY",
+						buildName: "HEM-EKX-ESP"
+				)
+			}
+		}
+	}
+
+	post 
+	{
+		changed
+		{
+			script 
+			{
+				UxChatNotify()
+			}
+		}
+	}
+}

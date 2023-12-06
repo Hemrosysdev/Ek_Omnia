@@ -1,0 +1,31 @@
+License agreement for EkxHmiDemonstrator software
+=================================================
+
+1. EkxHmiDemonstrator was developed by Ultratronik GmbH,
+Gilching, Germany. Copyright 2022 by Hemro Group AG,
+all rights reserved.
+
+2. This software was created for development support.
+
+3. This software can be used as it is without any warranty.
+There will be no warranty for any data, software or hardware 
+damage and/or loss resulting from the usage of this software.
+
+4. Approval is given to developers of
+
++ Ultratronik GmbH
++ Hemro Group AG
+
+as far as they are working for Hemro EKX project.
+
+5. All further usage out of the scope explicitly mentioned
+in this license agreement is strictly prohibited and 
+violates the copyrights of Ultratronik GmbH and Hemro Group AG.
+
+6. For changes or error reports contact Ultratronik GmbH,
+development department (info@ultratronik.de).
+
+26.10.2022, Gilching, Germany
+
+Ultratronik GmbH, Germany
+Gerd Esser, Ultratronik GmbH, Research & Development

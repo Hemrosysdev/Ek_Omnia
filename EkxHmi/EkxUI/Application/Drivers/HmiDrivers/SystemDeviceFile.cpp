@@ -1,0 +1,198 @@
+///////////////////////////////////////////////////////////////////////////////
+///
+/// @file SystemDeviceFile.cpp
+///
+/// @brief main application entry point of SystemDeviceFile.
+///
+/// @author Ultratronik GmbH
+///         Dornierstr. 9
+///         D-82205 Gilching
+///         Germany
+///         http://www.ultratronik.de
+///
+/// @author written by Gerd Esser, Forschung & Entwicklung, gesser@ultratronik.de
+///
+/// @date 20.09.2022
+///
+/// @copyright Copyright 2022 by Hemro International AG
+///            Hemro International AG
+///            Länggenstrasse 34
+///            CH 8184 Bachenbülach
+///            Switzerland
+///            Homepage: www.hemrogroup.com
+///
+///////////////////////////////////////////////////////////////////////////////
+
+#include "SystemDeviceFile.h"
+#include <QDebug>
+
+namespace SystemIo
+{
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+SystemDeviceFile::SystemDeviceFile( QObject * pParent )
+    : QFile( pParent )
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+SystemDeviceFile::SystemDeviceFile( const QString & strFile,
+                                    QObject *       pParent )
+    : QFile( strFile, pParent )
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+SystemDeviceFile::~SystemDeviceFile()
+{
+    close();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::writeFile( const QString & strContent )
+{
+    bool bSuccess = false;
+
+    if ( open( QIODevice::WriteOnly | QIODevice::Unbuffered ) )
+    {
+        write( strContent.toLocal8Bit() );
+        flush();
+        close();
+
+        bSuccess = true;
+    }
+    else
+    {
+        qWarning() << "SystemDeviceFile::writeFile() cannot write file" << fileName();
+    }
+
+    return bSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::writeFile( const double dValue )
+{
+    return writeFile( QString::number( dValue ) );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::writeFile( const int nValue )
+{
+    return writeFile( QString::number( nValue ) );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::writeFile( const quint32 u32Value )
+{
+    return writeFile( QString::number( u32Value ) );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::readFile( QString & strContent )
+{
+    bool bSuccess = false;
+
+    if ( open( QIODevice::ReadOnly | QIODevice::Unbuffered ) )
+    {
+        strContent = readAll();
+        bSuccess   = ( error() == QFileDevice::NoError );
+        close();
+    }
+    else
+    {
+        qWarning() << "SystemDeviceFile::readFile() cannot read file" << fileName() << errorString();
+    }
+
+    return bSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::readFile( double & dValue )
+{
+    QString strValue;
+
+    dValue = 0.0;
+    bool bSuccess = readFile( strValue );
+
+    if ( bSuccess
+         && !strValue.isEmpty() )
+    {
+        dValue = strValue.toDouble();
+    }
+    else
+    {
+        bSuccess = false;
+    }
+
+    return bSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool SystemDeviceFile::readFile( int & nValue )
+{
+    QString strValue;
+
+    nValue = 0;
+    bool bSuccess = readFile( strValue );
+
+    if ( bSuccess
+         && !strValue.isEmpty() )
+    {
+        nValue = strValue.toInt();
+    }
+    else
+    {
+        bSuccess = false;
+    }
+
+    return bSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+} // namespace SystemIo
+

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>WebSocket Test</title>
+
+		<script type="text/javascript" src="zepto.min.js"></script>
+
+		<script language="javascript" type="text/javascript">
+
+			var output;
+			var websocket = null;
+			var uploadFile = null;
+			var firmwareFileReader = new FileReader();
+			var fileContent = null;
+
+			firmwareFileReader.addEventListener('load', (event) => {
+				fileContent = event.target.result;
+				
+				json = {};
+				json.UploadFile = {}
+				json.UploadFile.Name = uploadFile.name;
+				json.UploadFile.Size = uploadFile.size;
+				
+				doSendFirmwareJson( json, true );
+
+			});
+			
+			function sleep(ms) 
+			{
+				return new Promise(resolve => setTimeout(resolve, ms));
+			}
+			
+			function init()
+			{
+				output = document.getElementById( "output" );
+
+				var idUri = document.getElementById( "uri" );
+				idUri.value = "ws://localhost:9988";
+			}
+
+			function openWebSocket()
+			{
+				var idUri = document.getElementById( "uri" );
+				
+				if ( websocket )
+					websocket.close();
+				
+				writeToScreen( "Try connect to " + idUri.value );
+				websocket            = new WebSocket( idUri.value );
+				websocket.binaryType = "arraybuffer";
+				websocket.onopen     = function(evt) { onFirmwareOpen(evt) };
+				websocket.onclose    = function(evt) { onFirmwareClose(evt) };
+				websocket.onmessage  = function(evt) { onFirmwareMessage(evt) };
+				websocket.onerror    = function(evt) { onFirmwareError(evt) };
+			}
+
+			function onFirmwareOpen(evt)
+			{
+				writeToScreen( "CONNECTED" );
+			}
+
+			function onFirmwareClose(evt)
+			{
+				writeToScreen( "DISCONNECTED" );
+			}
+
+			function onFirmwareMessage(evt)
+			{
+				var json = JSON.parse( evt.data );
+
+				if ( json.RequestChunk != null )
+				{
+					document.getElementById( "FilePos" ).value = json.RequestChunk.Pos + json.RequestChunk.Size;
+					document.getElementById( "ChunkSize" ).value = json.RequestChunk.Size;
+					document.getElementById( "Progress" ).value = json.RequestChunk.Progress;
+					document.getElementById( "EffTransferRate" ).value = json.RequestChunk.EffTransferRate;
+					document.getElementById( "RealTransferRate" ).value = json.RequestChunk.RealTransferRate;
+					
+					if ( parseInt( json.RequestChunk.EtaSec ) > 0 )
+					{
+						document.getElementById( "EtaSec" ).value = Math.floor( json.RequestChunk.EtaSec / 60 ) + "min" + json.RequestChunk.EtaSec % 60 + "sec";
+					}
+					else
+					{
+						document.getElementById( "EtaSec" ).value = json.RequestChunk.EtaSec;
+					}
+					
+					if ( json.RequestChunk.Pos >= uploadFile.size )
+					{
+						jsonResponse = {};
+						jsonResponse.UploadStatus = {};
+						jsonResponse.UploadStatus.Error = true;
+						jsonResponse.UploadStatus.Reason = "reaching eof";
+						
+						doSendFirmwareJson( jsonResponse, true );
+					}
+					else
+					{
+						var uploadMax = Math.min( uploadFile.size, json.RequestChunk.Pos + json.RequestChunk.Size );
+						jsonResponse = {};
+						jsonResponse.UploadChunk = {};
+						jsonResponse.UploadChunk.Pos = parseInt( json.RequestChunk.Pos );
+						jsonResponse.UploadChunk.Data = btoa( fileContent.slice( json.RequestChunk.Pos, uploadMax ) );
+						doSendFirmwareJson( jsonResponse, false );
+					}
+				}
+				else
+				{ 
+					writeToScreen( 'MESSAGE RECEIVED: ' + evt.data );
+
+					if ( json.AbortUpload != null )
+					{
+						//websocket.close();
+					}
+					else if ( json.StopDownload != null )
+					{
+						document.getElementById( "Success" ).value   = json.StopDownload.Success;
+						document.getElementById( "Reason" ).value   = json.StopDownload.Reason;
+						websocket.close();
+					}
+					else if ( json.Statistic != null )
+					{
+					}
+				}
+			}
+
+			function onFirmwareError(evt)
+			{
+				writeToScreen( 'ERROR: ' + evt.data );
+			}
+
+			function doSendFirmwareMsg( message, debug )
+			{
+				if ( debug )
+				{
+					writeToScreen( "SEND: " + message );
+				}
+				websocket.send( message );
+			}
+
+			function doSendFirmwareChunk( chunk, debug )
+			{
+				if ( debug )
+				{
+					writeToScreen( "SEND: " + chunk.length );
+				}
+				websocket.send( chunk );
+			}
+
+			function doSendFirmwareJson( json, debug )
+			{
+				doSendFirmwareMsg( JSON.stringify( json ), debug );//, undefined, 4 ) );
+			}
+
+			function writeToScreen( message )
+			{
+				output.value = message + "\n" + output.value;
+			}
+
+			function startFileUpload()
+			{
+				openWebSocket();
+
+				document.getElementById( "FilePos" ).value   = "";
+				document.getElementById( "ChunkSize" ).value = "";
+				document.getElementById( "Progress" ).value  = "0%";
+				document.getElementById( "Success" ).value   = "";
+				document.getElementById( "Reason" ).value   = "";
+
+				firmwareFileReader.readAsDataURL( uploadFile );
+			}
+			
+			window.addEventListener( "load", init, false );
+
+		</script>
+	</head>
+
+	<body>
+		<h2>WebSocket Test</h2>
+		
+		<table cellpadding="10">
+			<tr valign="top">
+				<td>
+					<table border="1">
+						
+						<tr>
+							<td>URI</td>
+							<td>
+								<input type="text" id="uri">
+							</td>
+							<td>
+								<button id="connect">Connect</button></br>
+								<script>
+									$( "#connect" ).on( "click", function()
+									{
+										openWebSocket();
+									});
+								</script>
+								<button id="disconnect">Disconnect</button>
+								<script>
+									$( "#disconnect" ).on( "click", function()
+									{
+										if ( websocket )
+										{
+											websocket.close();
+											websocket = null;
+										}
+									});
+								</script>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Request Chunk</td>
+							<td>
+								From: <input type="text" id="FilePos" readonly /></br>
+								Size: <input type="text" id="ChunkSize" readonly /></br>
+								Progress: <input type="text" id="Progress" readonly /></br>
+								Effective Transfer Rate: <input type="text" id="EffTransferRate" readonly /> bytes/sec</br>
+								Real Transfer Rate: <input type="text" id="RealTransferRate" readonly /> bytes/sec</br>
+								ETA: <input type="text" id="EtaSec" readonly /></br>
+							</td>
+							<td>
+							</td>
+						</tr>
+
+						<tr>
+							<td>Stop Upload</td>
+							<td>
+								Success: <input type="text" id="Success" readonly /></br>
+								Reason: <input type="text" id="Reason" readonly /></br>
+							</td>
+							<td>
+							</td>
+						</tr>
+
+                        <tr>
+                            <td>Filename</td>
+                            <td>
+								<input type="file" id="file-selector" accept=".swu"></br>
+								<script>
+									const fileSelector = document.getElementById('file-selector');
+									fileSelector.addEventListener('change', (event) => {
+									const fileList = event.target.files;
+									
+									uploadFile = fileList[0]
+									writeToScreen( uploadFile.name + ", size " + uploadFile.size );
+									});
+								</script>
+								
+                            </td>
+							<td>
+								<button id="startUpload">Upload</button></br>
+								<script>
+									$( "#startUpload" ).on( "click", function()
+									{
+										startFileUpload();
+									});
+								</script>
+								
+								<button id="abortUpload">Abort</button></br>
+								<script>
+									$( "#abortUpload" ).on( "click", function()
+									{
+										json = {};
+										json.AbortUpload = true;
+										doSendFirmwareJson( json, true );
+									});
+								</script>
+
+								<button id="clearFile">Clear File</button></br>
+								<script>
+									$( "#clearFile" ).on( "click", function()
+									{
+										if ( uploadFile != null )
+										{
+											json = {};
+											json.ClearFile = uploadFile.name;
+											doSendFirmwareJson( json, true );
+										}
+									});
+								</script>
+							</td>
+						</tr>
+					</table>
+				</td>
+				
+				<td>
+					<h3>Log Area:</h3>
+					<textarea id="output" rows="50" cols="80"></textarea></br>
+					<button id="sendClearLog">Clear</button></br>
+					<script>
+						$( "#sendClearLog" ).on( "click", function()
+						{
+							$( "#output" ).val( "" );
+						});
+					</script>
+				</td>
+			</tr>
+		</table>
+		
+	</body>
+</html>

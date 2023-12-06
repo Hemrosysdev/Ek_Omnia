@@ -1,0 +1,7 @@
+{
+	"FileVersion" : "1",
+	"MaxMotorSpeed" : 1700,
+	"NominalMotorSpeed" : 1400,
+	"AccelerationTime" : 250,
+	"DecelerationTime"  : 350
+}

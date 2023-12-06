@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package EkxProtocol;
+
+enum MessageType
+{
+	None = 0;
+	Ack = 1;
+	Nack = 2;
+	Ping = 3;
+	DcHallStartMotor = 4;
+	DcHallStartMotorSteps = 5;
+	DcHallStopMotor = 6;
+	DcHallTestMotor = 7;
+	DcHallStatus = 8;
+	EepromFlash = 9;
+	EepromData = 10;
+	PwmFadeIn = 11;
+	PwmFadeOut = 12;
+	PwmSetDuty = 13;
+	StepperMotorStart = 14;
+	StepperMotorStartSteps = 15;
+	StepperMotorStop = 16;
+	StepperMotorChangeRunFrequency = 17;
+	StepperMotorStatus = 18;
+	RequestStatus = 19;
+	WifiConfig = 20;
+	WifiStatus = 21;
+	McuCommand = 22;
+	McuReply = 23;
+}
+
+enum ReceiverId
+{
+	DcHallMotorDriver = 0;
+	StepperMotorDriver = 1;
+	EepromDriver = 2;
+	SpotLightDriver = 3;
+	StartStopBtnDriver = 4;
+	StartStopLightDriver = 5;
+    TempSensorDriver = 6;	
+    WifiDriver = 7;
+    McuDriver = 8;
+}
+
+message Message 
+{
+	uint32      preamble = 1;
+	uint32      length   = 2;
+	ReceiverId  receiverId = 3;
+	MessageType messageType = 4;
+	uint32      messageNum = 5;
+	uint32      repeatNum = 6;
+	string      payload  = 7;
+	uint32      crc32    = 8;
+}
+
+message PayloadAck
+{
+	uint32 ackMessageNum = 1;
+	uint32 ackRepeatNum = 2;
+}
+
+message PayloadStartStopBtn
+{
+	bool buttonPressed = 1;
+}
+
+message PayloadStartStopLight
+{
+	uint32 pwmValue = 1;
+}
+
+message PayloadSpotLight
+{
+	uint32 pwmValue = 1;
+}
+
+message PayloadDcHallStartMotor
+{
+	uint32  pwmDuty10th = 1;
+	uint32  pwmFrequency = 2;
+}
+
+message PayloadDcHallStartMotorSteps
+{
+    uint32  pwmDuty10th = 1;
+    uint32  pwmFrequency = 2;
+    uint32  steps = 3;
+}
+
+message PayloadDcHallStatus
+{
+    bool    valid = 1;
+    bool    faultPinActive = 2;
+    bool    motorRunning = 3;
+    uint64  motorRunTime = 4;
+    bool    motorTestOk = 5;
+    uint32  stepCounter = 6;
+}
+
+message PayloadEepromStatus
+{
+    bool    valid = 1;
+    string  productNo = 2;
+    string  serialNo = 3;
+}
+
+message PayloadEepromFlash
+{
+    string  productNo = 1;
+    string  serialNo = 2;
+}
+
+message PayloadPwmSetDuty
+{
+    uint32  pwmDuty = 1;
+}
+
+message PayloadPwmFaderSettings
+{
+    uint32  fadeInDutyPercent = 1;
+    uint32  fadeOutDutyPercent = 2;
+    uint32  fadeInTimeMs = 3;
+    uint32  fadeOutTimeMs = 4;
+}
+
+message PayloadDiscreteState
+{
+    bool  valid = 1;
+    bool  discreteHigh = 2;
+}
+
+message PayloadStepperMotorStart
+{
+    bool     direction = 1;
+    uint32   startFrequency = 2;
+    uint32   runFrequency = 3;
+    uint32   rampFreqPerStep = 4;
+}
+
+message PayloadStepperMotorStartSteps
+{
+    bool     direction = 1;
+    uint32   steps = 2;
+    uint32   startFrequency = 3;
+    uint32   runFrequency = 4;
+    uint32   rampFreqPerStep = 5;
+}
+
+message PayloadStepperMotorChangeRunFrequency
+{
+    uint32  runFrequency = 1;
+}
+
+message PayloadStepperMotorStatus
+{
+    bool  valid = 1;
+    bool  motorRunning = 2;
+    bool  faultPinActive = 3;
+}
+
+message PayloadTempSensorStatus
+{
+    bool    valid = 1;
+    uint32  adcVoltage = 2;
+}
+
+enum WifiMode
+{
+    Off = 0;
+    Ap = 1;
+    ApSta = 2;
+    Sta = 3;
+}
+
+message PayloadWifiConfig
+{
+    WifiMode  wifiMode = 1;
+    string    apSsid = 2;
+    string    apPassword = 3;
+    string    staSsid = 4;
+    string    staPassword = 5;
+    bool      staDhcp = 6;
+    string    staStaticIp = 7;
+    string    staStaticGateway = 8;
+    string    staStaticNetwork = 9;
+    string    staStaticDns = 10;
+}
+
+message PayloadWifiStatus
+{
+    string  apIp = 1;
+    string  apMac = 2;
+    string  staIp = 3;
+    string  staMac = 4;
+}

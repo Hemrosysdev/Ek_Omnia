@@ -1,0 +1,41 @@
+#!/bin/sh
+
+case "$1" in
+	startall)
+		/usr/local/bin/EspHostConnector -i 192.168.200.201 &
+		sleep 3
+		/usr/local/bin/EkxUI &
+		;;
+
+	stopall)
+		killall EkxUI
+		killall EspHostConnector
+		sleep 3
+		;;
+
+	restartall)
+		$0 stopall
+		sleep 1
+		$0 startall
+		;;
+
+	stopui)
+		killall EkxUI
+		;;
+
+	startui)
+		EkxUI $2 $3
+		;;
+
+	stopesp)
+		killall EspHostConnector
+		;;
+
+	startesp)
+		EspHostConnector -i 192.168.200.201 $2 $3
+		;;
+
+	*)
+		echo "Usage: $0 {startall|stopall|restartall|startui|stopui|startesp|stopesp}"
+		exit 1
+esac

@@ -1,0 +1,106 @@
+<!-- popup definition -->
+
+<div id="popup" class="popup">
+	<div class="popup_box" id="popup_box">
+		<span id="popup_close" class="popup_close">&times;</span>
+		<div id="popup_caption" class="popup_caption">
+			<div id="popup_caption_text" class="popup_caption_text">
+			</div>
+		</div>
+		<div class="popup_content" id="popup_content">
+			<div id="popup_loader" class="popup_loader">
+				<p>Executing ...</p>
+				<p><div class="lds-ripple"><div></div><div></div></div></p>
+			</div>
+			<div id="popup_progress_info" class="popup_progress_info">
+				Firmware update in progress - don't switch off the grinder!</br></br><div id="popup_upload_file"></div></br>
+				<div id="popup_progress_bar" class="popup_progress_bar stripes animated reverse slower">
+					<div id="popup_progress_bar_progress" class="popup_progress_bar_progress"></div>
+					<div id="popup_progress_bar_value" class="popup_progress_bar_value">0%</div>
+					<div id="popup_eta" style="transform:translateY(-70px);"></div>
+				</div>
+			</div>
+			<div id="log_id"></div>
+			<pre id="pre_id"></pre>
+		</div>
+		<div class="popup_base" id="popup_base">
+			<button class="blackbutton" id="popup_cancel" style="display:none;margin-top:15px;width:240px;">Cancel</button>
+			<button class="redbutton" id="popup_ok" style="display:none;margin-top:15px;">Ok</button>
+		</div>
+	</div>
+</div>
+
+<!-- confirm popup definition -->
+<div id="confirm_popup" class="confirm_popup">
+	<div class="confirm_popup_box">
+		<span id="confirm_popup_close" class="confirm_popup_close">&times;</span>
+		<div id="confirm_popup_caption" class="confirm_popup_caption">
+			<div id="confirm_popup_caption_text" class="confirm_popup_caption_text">
+			</div>
+		</div>
+		<div class="confirm_popup_content" id="confirm_popup_content">
+		</div>
+		<div class="confirm_popup_base" id="confirm_popup_base">
+			<table>
+				<tr>
+					<td><button class="blackbutton" style="width:240px;" id="confirm_popup_cancel">Cancel</button></td>
+					<td width="50px">&nbsp;</td>
+					<td><button class="redbutton" id="confirm_popup_ok">Ok</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	// Get the popup objects
+	var popup                    = document.getElementById( "popup" );
+	var popupEta                 = document.getElementById( "popup_eta" );
+	var popupClose               = document.getElementById( "popup_close" );
+	var popupOk                  = document.getElementById( "popup_ok" );
+	var popupCancel              = document.getElementById( "popup_cancel" );
+	var popupContent             = document.getElementById( "popup_content" );
+	var popupUploadFile          = document.getElementById( "popup_upload_file" );
+	var popupCaptionText         = document.getElementById( "popup_caption_text");
+	var popupLoader              = document.getElementById( "popup_loader");
+	var popupProgressInfo        = document.getElementById( "popup_progress_info");
+	var popupProgressBar         = document.getElementById( "popup_progress_bar");
+	var popupProgressBarValue    = document.getElementById( "popup_progress_bar_value");
+	var popupProgressBarProgress = document.getElementById( "popup_progress_bar_progress" );
+	var preElement               = document.getElementById( "pre_id");
+	var logElement               = document.getElementById( "log_id");
+
+	var confirmPopup             = document.getElementById( "confirm_popup" );
+	var confirmPopupOk           = document.getElementById( "confirm_popup_ok" );
+	var confirmPopupCancel       = document.getElementById( "confirm_popup_cancel" );
+	var confirmPopupClose        = document.getElementById( "confirm_popup_close" );
+
+	// When the user clicks on <span> (x), close the popup
+	popupClose.onclick = function()
+	{
+		closePopup();
+	}
+	popupCancel.onclick = function()
+	{
+		closePopup();
+	}
+	popupOk.onclick = function()
+	{
+		closePopup();
+	}
+
+	confirmPopupOk.onclick = function()
+	{
+		closeConfirmPopup();
+	};
+	confirmPopupClose.onclick = function()
+	{
+		closeConfirmPopup();
+	};
+	confirmPopupCancel.onclick = function()
+	{
+		closeConfirmPopup();
+	};
+
+</script>

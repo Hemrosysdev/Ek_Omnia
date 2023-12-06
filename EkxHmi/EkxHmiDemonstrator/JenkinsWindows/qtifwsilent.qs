@@ -1,0 +1,13 @@
+widget.deselectAll();
+#widget.selectComponent("qt.qt5.5122.win32_msvc2015");
+#widget.selectComponent("qt.qt5.5122.win64_msvc2015_64");
+#widget.selectComponent("qt.qt5.5122.qtcharts");
+#widget.selectComponent("qt.qt5.5122.qtdatavis3d");
+#widget.selectComponent("qt.qt5.5122.qtpurchasing");
+#widget.selectComponent("qt.qt5.5122.qtvirtualkeyboard");
+#widget.selectComponent("qt.qt5.5122.qtwebengine");
+widget.selectComponent("qt.qt5.5122.qtnetworkauth");
+#widget.selectComponent("qt.qt5.5122.qtwebglplugin");
+widget.selectComponent("qt.qt5.5122.qtscript");
+#widget.selectComponent("qt.tools.vcredist_msvc2015_x86");
+#widget.selectComponent("qt.tools.vcredist_msvc2015_x64");

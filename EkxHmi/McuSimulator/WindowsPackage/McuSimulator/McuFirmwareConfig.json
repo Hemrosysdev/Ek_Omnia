@@ -1,0 +1,8 @@
+{
+	"Device" : "MCU",
+	"FirmwareFile" : "ebldc_mc_S13.bin",
+	"ProductId" : "SZ-LH-MCU-BLDC21",
+	"SerialNo"  : "00.S03",
+	"HwVersion" : "21.07.07",
+	"SwVersion" : "00.S13"
+}

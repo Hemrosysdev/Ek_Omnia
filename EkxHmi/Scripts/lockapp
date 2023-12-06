@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sync;sync;sync
+mount -o,remount -r /usr/local/

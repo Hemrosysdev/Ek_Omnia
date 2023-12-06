@@ -1,0 +1,5 @@
+[1/4] cd /home/ddesimone/Git/EkxEsp/build/esp-idf/esptool_py && /home/ddesimone/.espressif/python_env/idf5.0_py3.10_env/bin/python /opt/esp/esp-idf-v5.0/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /home/ddesimone/Git/EkxEsp/build/partition_table/partition-table.bin /home/ddesimone/Git/EkxEsp/build/HEM-EKX-EspFirmware-V00-36-SystemHealthObserver.bin
+HEM-EKX-EspFirmware-V00-36-SystemHealthObserver.bin binary size 0x14ff80 bytes. Smallest app partition is 0x1f4000 bytes. 0xa4080 bytes (33%) free.
+[2/4] Performing build step for 'bootloader'
+[1/1] cd /home/ddesimone/Git/EkxEsp/build/bootloader/esp-idf/esptool_py && /home/ddesimone/.espressif/python_env/idf5.0_py3.10_env/bin/python /opt/esp/esp-idf-v5.0/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /home/ddesimone/Git/EkxEsp/build/bootloader/bootloader.bin
+Bootloader binary size 0x6760 bytes. 0x8a0 bytes (8%) free.

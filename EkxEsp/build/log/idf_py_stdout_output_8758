@@ -1,0 +1,46 @@
+-- Found Git: /usr/bin/git (found version "2.34.1") 
+-- The C compiler identification is GNU 11.2.0
+-- The CXX compiler identification is GNU 11.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /home/ddesimone/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/ddesimone/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /home/ddesimone/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32
+-- Project sdkconfig file /home/ddesimone/Git/EkxEsp/sdkconfig
+Loading defaults file /home/ddesimone/Git/EkxEsp/sdkconfig.defaults...
+/home/ddesimone/Git/EkxEsp/sdkconfig.defaults:13 CONFIG_APP_ROLLBACK_ENABLE was replaced with CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE
+/home/ddesimone/Git/EkxEsp/sdkconfig.defaults:14 CONFIG_TASK_WDT_PANIC was replaced with CONFIG_ESP_TASK_WDT_PANIC
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of time_t
+-- Check size of time_t - done
+-- Found Python3: /home/ddesimone/.espressif/python_env/idf5.0_py3.10_env/bin/python (found version "3.10.6") found components: Interpreter 
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- App "HEM-EKX-EspFirmware-V00-36-Syst" version: FIRST-STATE-NEW-UART-PROTOCOL-4
+-- Adding linker script /home/ddesimone/Git/EkxEsp/build/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_system/ld/esp32/sections.ld.in
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.api.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.newlib-data.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.syscalls.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
+-- Adding linker script /opt/esp/esp-idf-v5.0/components/soc/esp32/ld/esp32.peripherals.ld
+-- Components: Common CtrlUartTask Main PluginTaskAt24c16 PluginTaskWifiConnector UcdDcHallMotorTask UcdDiscreteInTask UcdEepromTask UcdHttpServerTask UcdMcuUartTask UcdPwmOutTask UcdSpotLightTask UcdStartStopBtnTask UcdStartStopLightTask UcdStepperMotorTask UcdSwUpdateTask UcdTempSensorTask UcdWifiConnectorTask UxEspCppLibrary app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_common esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_netif esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip mbedtls mqtt newlib nvs_flash openthread partition_table perfmon protobuf-c protocomm pthread sdmmc soc spi_flash spiffs tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
+-- Component paths: /home/ddesimone/Git/EkxEsp/Application/Common /home/ddesimone/Git/EkxEsp/Application/CtrlUartTask /home/ddesimone/Git/EkxEsp/Application/Main /home/ddesimone/Git/UX-EES-ESP32CPPLIB/PluginTasks/PluginTaskAt24c16/PluginTaskAt24c16 /home/ddesimone/Git/UX-EES-ESP32CPPLIB/PluginTasks/PluginTaskWifiConnector/PluginTaskWifiConnector /home/ddesimone/Git/EkxEsp/Application/UcdDcHallMotorTask /home/ddesimone/Git/EkxEsp/Application/UcdDiscreteInTask /home/ddesimone/Git/EkxEsp/Application/UcdEepromTask /home/ddesimone/Git/EkxEsp/Application/UcdHttpServerTask /home/ddesimone/Git/EkxEsp/Application/UcdMcuUartTask /home/ddesimone/Git/EkxEsp/Application/UcdPwmOutTask /home/ddesimone/Git/EkxEsp/Application/UcdSpotLightTask /home/ddesimone/Git/EkxEsp/Application/UcdStartStopBtnTask /home/ddesimone/Git/EkxEsp/Application/UcdStartStopLightTask /home/ddesimone/Git/EkxEsp/Application/UcdStepperMotorTask /home/ddesimone/Git/EkxEsp/Application/UcdSwUpdateTask /home/ddesimone/Git/EkxEsp/Application/UcdTempSensorTask /home/ddesimone/Git/EkxEsp/Application/UcdWifiConnectorTask /home/ddesimone/Git/UX-EES-ESP32CPPLIB/UxEspCppLibrary /opt/esp/esp-idf-v5.0/components/app_trace /opt/esp/esp-idf-v5.0/components/app_update /opt/esp/esp-idf-v5.0/components/bootloader /opt/esp/esp-idf-v5.0/components/bootloader_support /opt/esp/esp-idf-v5.0/components/bt /opt/esp/esp-idf-v5.0/components/cmock /opt/esp/esp-idf-v5.0/components/console /opt/esp/esp-idf-v5.0/components/cxx /opt/esp/esp-idf-v5.0/components/driver /opt/esp/esp-idf-v5.0/components/efuse /opt/esp/esp-idf-v5.0/components/esp-tls /opt/esp/esp-idf-v5.0/components/esp_adc /opt/esp/esp-idf-v5.0/components/esp_app_format /opt/esp/esp-idf-v5.0/components/esp_common /opt/esp/esp-idf-v5.0/components/esp_eth /opt/esp/esp-idf-v5.0/components/esp_event /opt/esp/esp-idf-v5.0/components/esp_gdbstub /opt/esp/esp-idf-v5.0/components/esp_hid /opt/esp/esp-idf-v5.0/components/esp_http_client /opt/esp/esp-idf-v5.0/components/esp_http_server /opt/esp/esp-idf-v5.0/components/esp_https_ota /opt/esp/esp-idf-v5.0/components/esp_https_server /opt/esp/esp-idf-v5.0/components/esp_hw_support /opt/esp/esp-idf-v5.0/components/esp_lcd /opt/esp/esp-idf-v5.0/components/esp_local_ctrl /opt/esp/esp-idf-v5.0/components/esp_netif /opt/esp/esp-idf-v5.0/components/esp_partition /opt/esp/esp-idf-v5.0/components/esp_phy /opt/esp/esp-idf-v5.0/components/esp_pm /opt/esp/esp-idf-v5.0/components/esp_psram /opt/esp/esp-idf-v5.0/components/esp_ringbuf /opt/esp/esp-idf-v5.0/components/esp_rom /opt/esp/esp-idf-v5.0/components/esp_system /opt/esp/esp-idf-v5.0/components/esp_timer /opt/esp/esp-idf-v5.0/components/esp_wifi /opt/esp/esp-idf-v5.0/components/espcoredump /opt/esp/esp-idf-v5.0/components/esptool_py /opt/esp/esp-idf-v5.0/components/fatfs /opt/esp/esp-idf-v5.0/components/freertos /opt/esp/esp-idf-v5.0/components/hal /opt/esp/esp-idf-v5.0/components/heap /opt/esp/esp-idf-v5.0/components/http_parser /opt/esp/esp-idf-v5.0/components/idf_test /opt/esp/esp-idf-v5.0/components/ieee802154 /opt/esp/esp-idf-v5.0/components/json /opt/esp/esp-idf-v5.0/components/log /opt/esp/esp-idf-v5.0/components/lwip /opt/esp/esp-idf-v5.0/components/mbedtls /opt/esp/esp-idf-v5.0/components/mqtt /opt/esp/esp-idf-v5.0/components/newlib /opt/esp/esp-idf-v5.0/components/nvs_flash /opt/esp/esp-idf-v5.0/components/openthread /opt/esp/esp-idf-v5.0/components/partition_table /opt/esp/esp-idf-v5.0/components/perfmon /opt/esp/esp-idf-v5.0/components/protobuf-c /opt/esp/esp-idf-v5.0/components/protocomm /opt/esp/esp-idf-v5.0/components/pthread /opt/esp/esp-idf-v5.0/components/sdmmc /opt/esp/esp-idf-v5.0/components/soc /opt/esp/esp-idf-v5.0/components/spi_flash /opt/esp/esp-idf-v5.0/components/spiffs /opt/esp/esp-idf-v5.0/components/tcp_transport /opt/esp/esp-idf-v5.0/components/ulp /opt/esp/esp-idf-v5.0/components/unity /opt/esp/esp-idf-v5.0/components/usb /opt/esp/esp-idf-v5.0/components/vfs /opt/esp/esp-idf-v5.0/components/wear_levelling /opt/esp/esp-idf-v5.0/components/wifi_provisioning /opt/esp/esp-idf-v5.0/components/wpa_supplicant /opt/esp/esp-idf-v5.0/components/xtensa
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ddesimone/Git/EkxEsp/build

@@ -1,0 +1,66 @@
+#ifndef DISK_USAGE_TIME_H
+#define DISK_USAGE_TIME_H
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#include <QObject>
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+class SqliteInterface;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+class DiskUsageTime : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY( int maxDiscUsageTimeHours READ maxDiscUsageTimeHours NOTIFY maxDiscUsageTimeHoursChanged )
+
+public:
+
+    explicit DiskUsageTime( QObject * parent = nullptr );
+    ~DiskUsageTime() override;
+
+    void create( SqliteInterface * pSqliteInterface );
+
+    Q_INVOKABLE int readDiscUsageTimeX100Secs( void ) const;
+
+    Q_INVOKABLE void reset( void );
+
+    int maxDiscUsageTimeHours() const;
+
+    bool isWarningActive() const;
+
+    bool isPreWarningActive() const;
+
+public slots:
+
+    void setMaxDiscUsageTimeHours( const int nMaxHours );
+
+signals:
+
+    void maxDiscUsageTimeHoursChanged();
+
+private:
+
+    SqliteInterface * m_pSqliteInterface { nullptr };
+
+    int               m_nMaxDiscUsageTimeHours { 120 };
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#endif // DISK_USAGE_TIME_H

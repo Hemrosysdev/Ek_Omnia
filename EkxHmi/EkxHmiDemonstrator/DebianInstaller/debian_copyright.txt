@@ -1,0 +1,6 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: HemroEkOmniaHmiDemonstrator
+Upstream-Contact: Gerd Esser <gesser@ultratronik.de>
+Files: opt/*
+Copyright: 2022 Hemro-Group-AG, Bachenbülach, Switzerland <info@hemrogroup.com>
+License: permissive

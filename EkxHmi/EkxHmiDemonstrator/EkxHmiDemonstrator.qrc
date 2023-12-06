@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Images/HEM-EKX-HMI-Drehring.png</file>
+        <file>Images/fav_32x32.png</file>
+        <file>Images/HEM-EKX-HMI-REd_02.png</file>
+        <file>Images/EKX UI Demonstrator_SplashScreen_06.png</file>
+        <file>Images/PduSymbol.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+#define TARGET        "McuSimulator"
+#define VERSION_NO    "01.01"
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 1
+#define VERSION_DATE  "06.04.2021"
+#define DEV_STATE     "Development"
+#define BUILD_NO      "9999"
+#define BUILD_DATE    "06.06.2022"
+#define BRANCH        "master"
+#define SHA           "5fd5e1d0898b6128cee36574dc5516ad7a25312b"

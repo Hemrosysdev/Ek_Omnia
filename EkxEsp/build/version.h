@@ -1,0 +1,11 @@
+#define TARGET        "HEM-EKX-EspFirmware"
+#define VERSION_NO    "00.36"
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 36
+#define VERSION_DATE  "16.06.2023"
+#define DEV_STATE     "SystemHealthObserver"
+#define BUILD_NO      "9999"
+#define BUILD_DATE    "03.07.2023"
+#define BRANCH        "master"
+#define SHA           "c6abe576ed9890d606684ae9a6b2a741c900a1f9"
+#define TARGET_FILE   "HEM-EKX-EspFirmware-V00-36-SystemHealthObserver.bin"

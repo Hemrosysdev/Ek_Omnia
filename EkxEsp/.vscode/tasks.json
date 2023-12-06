@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": true
+    },
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "group": "build",
+            "command": "make all",
+        },
+        {
+            "label": "Flash",
+            "type": "shell",
+            "group": "build",
+            "command": "make flash",
+        },
+        {
+            "label": "Monitor",
+            "type": "shell",
+            "group": "build",
+            "command": "make monitor",
+        },
+        {
+            "label": "Flash & Monitor",
+            "type": "shell",
+            "group": "build",
+            "command": "make flash monitor"
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "group": "build",
+            "command": "make clean"
+        },
+        {
+            "label": "git gui",
+            "type": "shell",
+            "group": "build",
+            "command": "git gui"
+        }
+    ]
+}

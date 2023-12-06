@@ -1,0 +1,372 @@
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" width="308px">Development</td>
+<td width="240">&nbsp;</td>
+<td width="160">&nbsp;</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">
+HMI AGSA test logs</br>
+<?php
+$output = null;
+exec( "du -h /log/HemroEkxAgsaLdtLogs | awk '{print $1}'", $output, $returnCode );
+echo "($output[0] used, $freeLogSpace[0] free)";
+?>
+</td>
+<td>
+<button class="redbutton" id="downloadAgsaLdtLogs">Download</button>
+<script>
+$( "#downloadAgsaLdtLogs" ).on( "click", function()
+{
+window.location.href = "restApi?downloadAgsaLdtLogs";
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="clearAgsaLogs">Clear</button>
+<script>
+$( "#clearAgsaLogs" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo rm -f /log/HemroEkxAgsaLdtLogs/*",
+"sudo rm -f /storage/HemroEkxAgsaLdtLogs/*"
+]
+};
+restApiCmd( true, "Clear AGSA test logs", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">HMI reboot</td>
+<td>
+<button class="redbutton" id="doRebootBtn">Reboot</button>
+<script>
+$( "#doRebootBtn" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo reboot" ]
+};
+restApiCmd( true, "HMI reboot", jsonCmd );
+});
+</script>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Start/Stop application</td>
+<td>
+<button class="redbutton" id="stopall">Stop</button>
+<script>
+$( "#stopall" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo /etc/init.d/S90app stop" ]
+};
+restApiCmd( true, "Stop application", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="startall">Start</button>
+<script>
+$( "#startall" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo /etc/init.d/S90app start" ]
+};
+restApiCmd( true, "Start application", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">SW update state</td>
+<td>
+<button class="redbutton" id="resetSwUpdateState">Reset state</button>
+<script>
+$( "#resetSwUpdateState" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "SetSoftwareUpdateStatus",
+data :
+{
+Process : "Normal",
+State : "IDLE"
+}
+};
+restApiCmd( true, "Reset SW update state", jsonCmd );
+});
+</script>
+</td>
+<td></td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Enable SSH access</td>
+<td>
+<button class="redbutton" id="enableSshBtn">Enable</button>
+<script>
+$( "#enableSshBtn" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo unlockrfs",
+"echo -n 'o' > /tmp/dropbear",
+"cat /etc/default/dropbear >> /tmp/dropbear",
+"sudo cp /tmp/dropbear /etc/default/dropbear",
+"sudo /etc/init.d/S50dropbear restart"
+]
+};
+restApiCmd( true, "Enable SSH", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="disableSshBtn">Disable</button>
+<script>
+$( "#disableSshBtn" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo unlockrfs",
+"echo -n 'DROPBEAR_ARGS=\"-w -s\"' > /tmp/dropbear",
+"sudo cp /tmp/dropbear /etc/default/dropbear",
+"sudo /etc/init.d/S50dropbear restart"
+]
+};
+restApiCmd( true, "Disable SSH", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Active RFS partition</td>
+<td>
+<div id="activeRfsPartition"></div>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Toggle RFS partition</td>
+<td>
+<button class="redbutton" id="setrfsimage3">Part #3</button>
+<script>
+$( "#setrfsimage3" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo fw_setenv part 3" ]
+};
+restApiCmd( true, "Set RFS partition #3", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="setrfsimage4">Part #4</button>
+<script>
+$( "#setrfsimage4" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo fw_setenv part 4" ]
+};
+restApiCmd( true, "Set RFS partition #4", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Active app partition</td>
+<td>
+<div id="activeAppPartition"></div>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Toggle app partition</td>
+<td>
+<button class="redbutton" id="setappimage5">Part #5</button>
+<script>
+$( "#setappimage5" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo fw_setenv app_partition 5" ]
+};
+restApiCmd( true, "Set application partition #5", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="setappimage6">Part #6</button>
+<script>
+$( "#setappimage6" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo fw_setenv app_partition 6" ]
+};
+restApiCmd( true, "Set application partition #6", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Unlock partitions</td>
+<td>
+<button class="redbutton" id="unlockRfs">Root FS</button>
+<script>
+$( "#unlockRfs" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo mount -o,remount -w /" ]
+};
+restApiCmd( true, "Unlock RootFS partition", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="unlockApp">Application</button>
+<script>
+$( "#unlockApp" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo mount -o,remount -w /usr/local/" ]
+};
+restApiCmd( true, "Unlock application partition", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">MCU check</td>
+<td>
+<div id="mcuCheckEnabled"></div>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold"></td>
+<td>
+<button class="redbutton" id="disableMcuCheck">disable</button>
+<script>
+$( "#disableMcuCheck" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo touch /config/mcu_ignored" ]
+};
+restApiCmd( true, "Disable MCU Check", jsonCmd );
+});
+</script>
+</td>
+<td>
+<button class="blackbutton" id="enableMcuCheck">enable</button>
+<script>
+$( "#enableMcuCheck" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo rm /config/mcu_ignored" ]
+};
+restApiCmd( true, "Enable MCU Check", jsonCmd );
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">SQLite database</td>
+<td>
+<button class="redbutton" id="removeDb">Remove</button>
+<script>
+$( "#removeDb" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands : [ "sudo rm -f /db_storage/EkxSqlite.db" ]
+};
+restApiCmd( true, "Remove SQLite database", jsonCmd );
+});
+</script>
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Time</td>
+<td>
+<button class="redbutton" id="setTime">Set browser time</button>
+<script>
+$( "#setTime" ).on( "click", function()
+{
+var currentDate = new Date();
+var timeString = currentDate.toISOString().slice(0, 19).replace('T', ' ');
+const options = Intl.DateTimeFormat().resolvedOptions();
+const timezone = options.timeZone;
+// "sudo timedatectl set-timezone " + timezone,
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo date -s '" + timeString + "'",
+"sudo hwclock --systohc"
+]
+};
+restApiCmd( true, "Set board time to local browser time", jsonCmd, requestSystemStatus );
+});
+</script>
+</td>
+<td align="center" class="tableDescriptorNormal">
+Local browser time</br>
+<input type="text" id="localTime" class="tableDescriptorNormal" size="15" readonly > </br>
+<script type="text/javascript">
+var timer = setInterval(updateClock, 1000);
+var localTime = document.getElementById("localTime");
+function updateClock()
+{
+const today = new Date();
+localTime.value = today.toLocaleString();
+};
+</script>
+HMI board time</br>
+<input type="text" id="hmiTime" class="tableDescriptorNormal" size="15" readonly >
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>

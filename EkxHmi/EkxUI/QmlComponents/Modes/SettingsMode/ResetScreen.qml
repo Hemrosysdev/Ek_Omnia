@@ -1,0 +1,73 @@
+import QtQuick 2.0
+import "../../CommonItems"
+import EkxMainstateEnum 1.0
+
+Item
+{
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // self defined properties
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // common properties
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    width: 480
+    height: 360
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // functions
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    function save()
+    {
+        console.log("Save calibration values: Type: " + entryType)
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // signal handlers
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // items
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    ConfirmScreen
+    {
+        id: idQuestion;
+        visible: true
+        infoText:  "All your recipes \n and notes will be \n deleted. Reset?";
+        confirmText: "Reset";
+        colorRedNotGreen: true;
+
+        onUserCanceled:
+        {
+            settingsStateMachine.back();
+        }
+
+        onUserConfirmed:
+        {
+            mainStatemachine.doFactoryReset();
+            idInfo.visible = true;
+        }
+    }
+
+    ConfirmScreen
+    {
+        id: idInfo;
+        visible: false;
+        infoText:  "Factory reset\nsuccessful!"
+        enableCancel: false
+        enableConfirm: false
+        enableOk: true
+
+        onUserNoticed:
+        {
+            // Reset to classic mode. Cannot do this from resetEkxMainState() since it would
+            // dump us out of the reset screen right away and not trigger the tutorial.
+            mainStatemachine.ekxMainstate = EkxMainstateEnum.EKX_CLASSIC_MODE;
+            idWelcomeHandler.autostart();
+        }
+    }
+}
+

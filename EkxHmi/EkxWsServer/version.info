@@ -1,0 +1,15 @@
+[VersionId]
+Component=EspWsServer
+VersionNo=00.03
+VersionDate=17.02.2023
+DevState=LockableFile
+
+[Source]
+Company=Ultratronik GmbH
+Location=Gilching, Germany
+Project=Hemro EKX
+
+[History]
+00.03=17.02.2023;HEKX-702: Insert file locking
+00.02=26.08.2022;Insert EKX state machine adaption
+00.01=27.02.2022;Project initialization

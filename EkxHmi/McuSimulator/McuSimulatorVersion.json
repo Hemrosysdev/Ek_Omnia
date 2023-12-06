@@ -1,0 +1,12 @@
+{
+    "TARGET"        : "McuSimulator",
+    "VERSION_NO"    : "01.01",
+    "VERSION_MAJOR" : 1,
+    "VERSION_MINOR" : 1,
+    "VERSION_DATE"  : "06.04.2021",
+    "DEV_STATE"     : "Development",
+    "BUILD_NO"      : "9999",
+    "BUILD_DATE"    : "06.06.2022",
+    "BRANCH"        : "master",
+    "SHA"           : "5fd5e1d0898b6128cee36574dc5516ad7a25312b"
+}

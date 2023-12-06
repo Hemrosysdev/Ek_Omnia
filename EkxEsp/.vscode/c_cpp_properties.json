@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../UX-EES-ESP32CPPLIB/UxEspCppLibrary/**",
+                "${workspaceFolder}/../UX-EES-ESP32CPPLIB/PluginTasks/PluginTaskWifiConnector/PluginTaskWifiConnector/**",
+                "${workspaceFolder}/../UX-EES-ESP32CPPLIB/PluginTasks/PluginTaskAt24c16/PluginTaskAt24c16/**",
+                "${config:idf.espIdfPath}/components/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

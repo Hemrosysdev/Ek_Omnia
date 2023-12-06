@@ -1,0 +1,48 @@
+[VersionId]
+Component=HEM-EKX-EspFirmware
+VersionNo=00.36
+VersionDate=16.06.2023
+DevState=SystemHealthObserver
+UxEsp32CppLibTag=master
+
+[Source]
+Company=Ultratronik GmbH
+Location=Gilching, Germany
+Project=Hemro EKX Application for ESP32 (WiFi extension board)
+
+[History]
+00.36=16.06.2023;insert system health observer
+00.35=23.05.2023;finalize web page reintegration
+00.34=10.05.2023;switch from socket based to UART protocol
+00.33=17.04.2023;bug fix: memory leak with JSON object
+00.32=11.04.2023;HEKX-711, HEKX-710: insert AGSA and PDU fault pin detection
+00.31=26.02.2023;minor EEPROM data valid bug fix
+00.30=13.02.2023;HEKX-916, PDU run time integration
+00.29=13.02.2023;new acknowledge protocol HMI/ESP
+00.28=19.12.2022;insert PDU power enable signal for PT-C
+00.27=04.12.2022;HEKX-695: insert PDU motor detection test
+00.26=08.08.2022;HEKX-177: insert fadein upon startup
+00.25=12.07.2022;modify AGSA gear translation to 1:7.1 -> using step mode 1/32
+00.24=30.05.2022;change WiFi interface from AP yes/no to WiFi mode
+00.23=07.04.2022;integration on P01 Rev. 200
+00.21=14.12.2021;migrate to IDF 4.3.1 and namespace UxEspCppLibrary
+00.20=12.11.2021;bug fix: toggle switches not operable
+00.19=09.11.2021;implement PDU motor test feature
+00.18=01.03.2021;minor bug fix: regression form tcp error analysis
+00.17=28.02.2021;migration to IDF v4.2
+00.16=18.02.2021;adapt to UX C++ library changes due to required consumer queue size
+00.15=09.02.2021;activate fader for standby mode
+00.14=08.02.2021;invert PWM meaning due to pull-up logic of hardware
+00.13=11.12.2020;bug fix for WLAN configuration, config not fully initialized
+00.12=23.11.2020;test version for SW update
+00.11=23.11.2020;test version for SW update
+00.10=21.11.2020;test version for SW update
+00.09=21.11.2020;test version for SW update
+00.08=21.11.2020;test version for SW update
+00.07=21.11.2020;test version for SW update
+00.06=20.11.2020;working SW update for ESP now
+00.05=20.11.2020;working SW update for ESP now, new NAT component
+00.04=03.11.2020;working SW update for ESP now
+00.03=03.11.2020;working SW update for ESP now
+00.02=30.10.2020;working SW update for ESP now
+00.01=04.03.2020;Project initialization

@@ -1,0 +1,59 @@
+notification_type_id;notification_name;notification_class;short_info;long_info;description
+6;AGSA_FAILED_BLOCKAGE;Warning;0;AGSA Blockage;AGSA driver\nfailed!\nBlockage!;AGSA motor drive has been stopped because of a blockage within drive system. Try to repeat action.
+34;AGSA_FAILED_NO_DDD;Error;0;AGSA No DDD;AGSA driver\nfailed!\nNo DDD!;AGSA motor drive has been stopped because at least one DDD sensor is failed.
+12;AGSA_FAILED_TIMEOUT;Warning;0;AGSA Timeout;AGSA driver\nfailed!\nTimeout!;AGSA motor drive has been stopped by timeout, because a complete AGSA move reaches timeout. Try to repeat action.
+57;AGSA_FAULT_PIN_ACTIVE;Error;0;AGSA Fault Pin;AGSA stepper\nmotor driver pin\nindicates fault!;AGSA stepper motor driver chip indicates pin fault. Retry AGSA action or contact service if still present.
+7;CHANGE_DISCS_INFO;Info;0;Grinding Discs;Change grinding\ndiscs!;Grinding discs life time has been exceeded. Exchange grinding discs and reset counter.
+45;DB_ADD_DELTA_TO_COUNTER;Warning;0;DB Delta.Cnt. Failed;Database access\ndelta to counter\nfailed!;Internal database error. Incrementing of a counter has been failed.
+44;DB_ADD_GRIND;Warning;0;DB Add Grind Failed;Database access\nadd grind\nfailed!;Internal database error. Adding a grind result into database failed.
+42;DB_CHANGE_RECIPE;Warning;0;DB Chg.Recipe Failed;Database access\nchange recipe\nfailed!;Internal database error. Inserting a recipe change failed. 
+48;DB_CREATE_NEW_SCHEME;Info;0;Create New DB;New database\ncreated!;A new database scheme has been successfully activated. 
+49;DB_CREATE_NEW_SCHEME_FAILED;Error;0;Create New DB Failed;Create new\ndatabase\nfailed!;Internal database error. Buildup of a new database failed, the scheme couldn't be applied.
+43;DB_INSERT_RECIPE;Warning;0;DB Ins.Recipe Failed;Database access\ninsert recipe\nfailed!;Internal database error. Insertion of a new recipe failed.
+47;DB_QUERY_COUNTER;Warning;0;DB Delta.Cnt. Failed;Database access\nquery counter\nfailed!;Internal database error. Database request for a counter failed.
+41;DB_QUERY_STATISTICS_RESULT;Warning;0;DB Query Stat. Failed;Database access\nquery statistics\nresult failed!;Internal database error. Query of statistics database result failed.
+46;DB_RESET_COUNTER;Warning;0;DB Reset.Cnt. Failed;Database access\nreset counter\nfailed!;Internal database error. Reset of counters failed.
+39;DB_UPDATE_FAILED;Error;0;DB Update Failed;Database update\nfailed!;Internal database error. Database update failed.
+5;DDD1_FAILED;Error;0;DDD 1 Failed!;DDD 1 sensor\nfailed!;DDD 1 (coarse) sensor is not available or sensor data invalid. DDD display is invalid and AGSA deactivated.
+11;DDD2_FAILED;Error;0;DDD 2 Failed!;DDD 2 sensor\nfailed!;DDD 2 (fine) sensor is not available or sensor data invalid. DDD display is invalid and AGSA deactivated.
+3;ESP_INTERFACE_FAILED;Error;1;Driver Comm Failed;Driver board\ncommunication\nfailed!;Communication between HMI and driver board is interrupted. No grind actions possible. WebServer is not available.
+1;GRINDER_CHAMBER_OPENED;Error;0;Open Grinder Chamber;Grinder chamber\nopened!;The grinder chamber is opened. Motor cannot be actuated. No grind action possible.
+2;HOPPER_DISMOUNTED;Error;0;No Bean Hopper;Bean hopper\ndismounted!;The bean hopper has been dismounted. Motor cannot be actuated. No grind action possible.
+19;LOAD_SETTINGS_FAILED;Error;0;Load Settings Failed;Load settings\nfailed!;Loading of configuration data failed. Try to reconfigure the grinder.
+50;MAIN_STATE_FILE_CORRUPTED;Error;0;State File Corrupt;Main state file\ncorrupted!;Internal state file corrupted. Maybe inconsistent grinder behaviour.
+52;MAIN_STATE_FILE_READ_FAILED;Error;0;State File Read;Main state file\nread failed!;Internal state file couldn't be read and will be resetted. Maybe inconsistent grinder behaviour.
+53;MAIN_STATE_FILE_WRITE_FAILED;Error;0;State File Write;Main state file\nwrite failed!;Internal state file couldn't be written and will be resetted. Maybe inconsistent grinder behaviour.
+4;MCU_INTERFACE_FAILED;Error;1;MCU Comm Failed;MCU board\ncommunication\nfailed!;Communication between HMI board and motor control unit is interrupted. No grind actions possible. 
+58;PDU_FAULT_PIN_ACTIVE;Error;0;PDU Fault Pin;PDU motor\ndriver pin\nindicates fault!;PDU motor driver chip indicates pin fault. Retry PDU action or contact service if still present.
+55;PDU_INSTALLED_AFTER_ABSENCE;Info;0;PDU Detected;PDU detected\nafter being absent!;PDU has been automatically detected as installed after being absent.
+56;PDU_UNINSTALLED_AFTER_PRESENCE;Info;0;PDU Not Detected;PDU not detected\nafter being present!;PDU has been automatically detected as not installed after being present.
+35;ROLLBACK_STARTUP_FAILED;Error;0;Startup Failed;Rollback startup\nfailed!;Rollback to previous system state failed after a failed SW update. Try to repeat SW update.
+40;SAVE_SETTINGS_FAILED;Error;1;Save Settings Failed;Save settings\nfailed!;Save of configuration file failed. Changes are lost.
+28;STARTUP_ESP_CHECK_VERSION_TIMEOUT;Error;0;Startup Failed;Driver board SW\nversion check failed!\nTimeout!;Read of driver board version information timed out.
+29;STARTUP_MCU_CHECK_VERSION_TIMEOUT;Error;0;Startup Failed;MCU board SW\nversion check failed!\nTimeout!;Read of MCU version information timed out.
+18;STARTUP_ROOTFS_VERSION_FAILED;Error;0;Startup Failed;Startup check of\nimage #1 failed!;Check of core system version information failed. Repeat SW update to recover.
+8;START_GRIND_FAILED;Error;0;Start Grind Failed;Start grind\nfailed!;Grinding motor hasn't started although commanded to do so. Maybe grinding motor is blocked or communication disturbed?
+9;STOP_GRIND_FAILED;Error;0;Stop Grind Failed;Stop grind\nfailed!;Grinding motor hasn't stopped although commanded to do so. Maybe communication to motor control unit disturbed?
+26;SW_UPDATE_COMPLETED;Info;0;SW Update Completed;Software update\nsuccessfully\ncompleted!;Software update has been successfully completed.
+21;SW_UPDATE_ESP_UPDATE_FAILED;Error;0;SW Update Failed;Update of driver\nboard failed!;Software update of driver board failed. System will be rolled back to previous state. Try to repeat SW update.
+30;SW_UPDATE_ESP_UPDATE_TIMEOUT;Error;0;SW Update Failed;Timeout while\nupdating driver board!;Software update of driver board timed out. System will be rolled back to previous state. Try to repeat SW update.
+38;SW_UPDATE_ESP_VALIDATE_VERSION_FAILED;Error;0;SW Update Failed;Driver board SW\nversion validation\nfailed!;Validation of driver board version failed after software update. System will be rolled back to previous state. Try to repeat SW update.
+32;SW_UPDATE_ESP_VALIDATE_VERSION_TIMEOUT;Error;0;SW Update Failed;Timeout while\nvalidating driver board\nSW version!;Validation of driver board version timed out after software update. System will be rolled back to previous state. Try to repeat SW update.
+20;SW_UPDATE_MCU_UPDATE_FAILED;Error;0;SW Update Failed;Update of MCU\nboard failed!;Software update of MCU failed. System will be rolled back to previous state. Try to repeat SW update.
+31;SW_UPDATE_MCU_UPDATE_TIMEOUT;Error;0;SW Update Failed;Timeout while\nupdating MCU board!;Software update of MCU timed out. System will be rolled back to previous state. Try to repeat SW update.
+37;SW_UPDATE_MCU_VALIDATE_VERSION_FAILED;Error;0;SW Update Failed;MCU board SW\nversion validation\nfailed!;Validation of MCU version failed after software update. System will be rolled back to previous state. Try to repeat SW update.
+33;SW_UPDATE_MCU_VALIDATE_VERSION_TIMEOUT;Error;0;SW Update Failed;Timeout while\nvalidating MCU board\nSW version!;Validation of MCU version timed out after software update. System will be rolled back to previous state. Try to repeat SW update.
+14;SW_UPDATE_PACKAGE_FAILED;Error;0;SW Update Failed;File is no valid\nupdate package!;Consitency check of SW update package failed. Try to repeat SW update or validate package source.
+15;SW_UPDATE_PACKAGE_NO_UPGRADE;Warning;0;SW Update Failed;Update package\nis no upgrade!;Software update package rejected. Package contains no upgrade version.
+24;SW_UPDATE_ROLLBACK_APP_FAILED;Error;0;Rollback Failed;Rollback of\nimage #2 failed!;Rollback of image #2 of 2 to previous state failed after failed SW update. System is probably inconsistent. Try to repeat SW update.
+27;SW_UPDATE_ROLLBACK_FAILED;Error;0;Rollback Failed;Rollback after\nSW update failed!;Rollback to previous system state failed after failed SW update. Try to repeat SW update.
+25;SW_UPDATE_ROLLBACK_ROOTFS_FAILED;Error;0;Rollback Failed;Rollback of\nimage #1 failed!;Rollback of image #1 of 2 to previous state failed after failed SW update. System is probably inconsistent. Try to repeat SW update.
+23;SW_UPDATE_ROLLED_BACK;Info;0;Rollback;Perform rollback\nafter failed\nSW update!;System has been rolled back to previous state after failed SW update. Try to repeat SW update.
+36;SW_UPDATE_STARTUP_FAILED;Info;0;Startup Failed;System startup\nfailed due to\nprevious errors!;System startup failed due to previous error. Maybe restart grinder.
+51;SW_UPDATE_STATE_FILE_CORRUPTED;Error;0;State File Corrupt;Software update\nstate file\ncorrupted!;Internal SW update state file corrupted. System state reset to normal.
+54;SW_UPDATE_STATE_FILE_WRITE;Error;0;State File Write;Software update\nstate file\nwrite failed!;Internal SW update state file couldn't be written. System state reset to normal.
+17;SW_UPDATE_UNPACK_APPLICATION_FAILED;Error;0;SW Update Failed;Unpacking image\n#2 failed!;Software update failed. Unpacking image #2 of 2 failed. Try to repeat SW update.
+16;SW_UPDATE_UNPACK_ROOTFS_FAILED;Error;0;SW Update Failed;Unpacking image\n#1 failed!;Software update failed. Unpacking image #1 of 2 failed. Try to repeat SW update.
+22;SW_UPDATE_UPLOAD_ABORTED;Warning;0;SW Update Failed;Upload aborted\nby user!;Upload of software update package has been aborted by user. Try to repeat SW update.
+13;SW_UPDATE_UPLOAD_FAILED;Warning;0;SW Update Failed;Upload of update\npackage failed!;Upload of software update package failed. Try to repeat SW update.
+10;SYSTEM_TIME_LOST;Warning;1;System Time Lost;System time\nlost, please\nset manually!;System clock has been resetted due to a long period power off. Please set the current date and time within system settings menu. The system provides a clock powering of max. 2 weeks.

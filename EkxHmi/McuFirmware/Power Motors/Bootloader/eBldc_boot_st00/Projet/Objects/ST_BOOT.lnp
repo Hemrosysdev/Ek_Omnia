@@ -1,0 +1,15 @@
+--cpu Cortex-M0
+".\objects\startup_stm32f030.o"
+".\objects\system_stm32f0xx.o"
+".\objects\stm32f0xx_rcc.o"
+".\objects\stm32f0xx_gpio.o"
+".\objects\stm32f0xx_flash.o"
+".\objects\stm32f0xx_misc.o"
+".\objects\flash.o"
+".\objects\boot.o"
+".\objects\main.o"
+".\objects\stm32f0xx_it.o"
+--library_type=microlib --strict --scatter ".\Objects\ST_BOOT.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\ST_BOOT.map" -o .\Objects\ST_BOOT.axf

@@ -1,0 +1,6 @@
+#! /bin/bash
+export VERSION_NO="01.11"
+export VERSION_DATE="26.10.2022"
+export VER_MAJ="1"
+export VER_MIN="11"
+export VER_PAT="0"

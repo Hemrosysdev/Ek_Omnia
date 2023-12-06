@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Hemro EK Omnia HMI Demonstrator
+Exec=/opt/HemroEkOmniaHmiDemonstrator/EkxHmiDemonstrator %F
+Icon=HemroEkOmniaHmiDemonstrator
+Terminal=false
+Categories=Development

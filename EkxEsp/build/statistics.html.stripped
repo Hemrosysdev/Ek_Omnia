@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hemro EKX Web Interface - Statistics</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="css/style.css?ver=exk_v1" />
+<script src="js/zepto.min.js"></script>
+<script src="js/aliveCheck.js"></script>
+<script src="js/popupManagement.js"></script>
+<script src="js/commonHelpers.js"></script>
+<script type="text/javascript">
+/********************************************************************************/
+$( document ).ready( requestSystemStatus );
+/********************************************************************************/
+function processSystemStatus( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.refMsgType == "RequestSystemStatus" )
+{
+$( "#hmiSerialNumber" ).text( jsonResult.data.hmiSerialNo );
+}
+}
+catch ( e )
+{
+}
+}
+/********************************************************************************/
+function requestSystemStatus()
+{
+var jsonCmd =
+{
+msgType : "RequestSystemStatus",
+};
+restApiCmd( false, "RequestSystemStatus", jsonCmd, processSystemStatus );
+}
+</script>
+</head>
+<body>
+<div style="width:100%;padding:0;">
+<div data-include="includeHeader.html">Loading header ...</div>
+<div data-include="includeNoJavascript.html">Loading no javascript ...</div>
+<div id="infoBackground" style="width:100%;color:black;background-color:#f7f7f7;margin:auto;float:left;">
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" colspan="2"><a href="index.html"><img src="images/home.png" alt="Home" /></a></td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" colspan="2">Configure statistics period</td>
+</tr>
+<tr>
+<td width="300px" class="tableDescriptorBold">Quick period selections</td>
+<td width="400px">
+<select name="periodSelection" id="periodSelection" class="redbutton" style="width:400px;">
+<option value="thisWeek" selected="selected">This week</option>
+<option value="lastWeek">Last week</option>
+<option value="thisMonth">This month</option>
+<option value="lastMonth">Last month</option>
+<option value="thisYear">This year</option>
+<option value="lastYear">Last year</option>
+<option value="all">Don't care</option>
+</select>
+<script>
+function updatePeriod( period )
+{
+var endDate = new Date();
+var startDate = new Date();
+if ( period == "thisWeek" )
+{
+startDate.setTime( startDate.getTime() - startDate.getDay() * 24 * 60 * 60 * 1000 );
+// endDate unchanged
+}
+else if ( period == "thisMonth" )
+{
+startDate = new Date( startDate.getFullYear(), startDate.getMonth(), 1 );
+// endDate unchanged
+}
+else if ( period == "thisYear" )
+{
+startDate = new Date( startDate.getFullYear(), 0, 1 );
+// endDate unchanged
+}
+else if ( period == "all" )
+{
+startDate = new Date( 1970, 0, 1 );
+// endDate unchanged
+}
+else if ( period == "lastWeek" )
+{
+endDate.setTime( endDate.getTime() - ( endDate.getDay() + 1 ) * 24 * 60 * 60 * 1000 );
+startDate.setTime( endDate.getTime() - endDate.getDay() * 24 * 60 * 60 * 1000 );
+}
+else if ( period == "lastMonth" )
+{
+if ( endDate.getMonth() > 0 )
+endDate = new Date( endDate.getFullYear(), endDate.getMonth(), 0 );
+else
+endDate = new Date( endDate.getFullYear() - 1, 11, 31 );
+startDate = new Date( endDate.getFullYear(), endDate.getMonth(), 1 );
+}
+else if ( period == "lastYear" )
+{
+startDate = new Date( startDate.getFullYear() - 1, 0, 1 );
+endDate = new Date( endDate.getFullYear() - 1, 11, 31 );
+}
+var dd = String( endDate.getDate() ).padStart( 2, '0' );
+var mm = String( endDate.getMonth() + 1 ).padStart( 2, '0' );
+var yyyy = endDate.getFullYear();
+var periodEnd = yyyy + "-" + mm + "-" + dd;
+$( "#periodEnd" ).val( periodEnd );
+var dd = String( startDate.getDate() ).padStart( 2, '0' );
+var mm = String( startDate.getMonth() + 1 ).padStart( 2, '0' );
+var yyyy = startDate.getFullYear();
+var periodStart = yyyy + "-" + mm + "-" + dd;
+$( "#periodStart" ).val( periodStart );
+}
+$( "#periodSelection" ).change( function() {	updatePeriod( this.value ); } );
+$( "#periodSelection" ).ready(	function() {	updatePeriod( "thisWeek" ); } );
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Period start</td>
+<td>
+<input type="date" id="periodStart" class="tableDescriptorNormal" size="20" maxlength="20">
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Period end</td>
+<td>
+<input type="date" id="periodEnd" class="tableDescriptorNormal" size="20" maxlength="20">
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" colspan="2">Configure event statistics</td>
+</tr>
+<tr>
+<td width="300px" class="tableDescriptorBold">Event group</td>
+<td width="400px">
+<select id="eventNotificationExclusionSelection" class="redbutton" style="width:400px;">
+<option value="all" selected="selected">Don't care</option>
+<option value="onlyNotifications">Only notifications</option>
+<option value="withoutNotifications">Without notifications</option>
+</select>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Event type</td>
+<td>
+<select id="eventTypeSelection" class="redbutton" style="width:400px;">
+<option value="all" selected="selected">Don't care</option>
+</select>
+<script>
+function processEventTypesSelection( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+for ( var i = 0; i < jsonResult.data.length; i++ )
+{
+$('#eventTypeSelection').append( $( '<option>', { value: jsonResult.data[i].key, text: jsonResult.data[i].value } ) );
+}
+}
+catch ( e )
+{
+}
+}
+$( "#eventTypeSelection" ).ready(	function()
+{
+var jsonCmd =
+{
+msgType : "RequestEventTypes",
+};
+restApiCmd( false, "RequestEventTypes", jsonCmd, processEventTypesSelection );
+} );
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Notification type</td>
+<td>
+<select id="notificationTypeSelection" class="redbutton" style="width:400px;">
+<option value="all" selected="selected">Don't care</option>
+</select>
+<script>
+function processNotificationTypesSelection( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+for ( var i = 0; i < jsonResult.data.length; i++ )
+{
+$('#notificationTypeSelection').append( $( '<option>', { value: jsonResult.data[i].key, text: jsonResult.data[i].value } ) );
+}
+}
+catch ( e )
+{
+}
+}
+$( "#notificationTypeSelection" ).ready(	function()
+{
+var jsonCmd =
+{
+msgType : "RequestNotificationTypes",
+};
+restApiCmd( false, "RequestNotificationTypes", jsonCmd, processNotificationTypesSelection );
+} );
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Grouping</td>
+<td>
+<select name="eventGroupSelection" id="eventGroupSelection" class="redbutton" style="width:400px;">
+<option value="single" selected="selected">List each single entry</option>
+<option value="group">Count same entries together</option>
+</select>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Process request</td>
+<td>
+<button class="blackbutton" id="downloadEvents" style="width:400px;">Download .csv</button>
+<script>
+function processEventStatistics( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.success )
+{
+window.location.href = "restApi?downloadEventStatistics";
+}
+else
+{
+openPopup(	"Download event statistics",
+"Error!<br>Query couldn't be executed!" );
+}
+}
+catch ( e )
+{
+openPopup(	"Download event statistics",
+"Error!<br>Return object is not valid!");
+}
+}
+$( "#downloadEvents" ).on( "click", function()
+{
+if ( $( "#periodStart" ).val() > $( "#periodEnd" ).val() )
+{
+openPopup( "Download event statistics",
+"Error!<br>Start period date lays behind end period date.<br>Please correct period dates!" );
+}
+else
+{
+var query = "";
+var eventGroupSelection					= $( "#eventGroupSelection" ).val();
+var eventNotificationExclusionSelection	= $( "#eventNotificationExclusionSelection" ).val();
+var eventTypeSelection					= $( "#eventTypeSelection" ).val();
+var eventGroupSelection					= $( "#eventGroupSelection" ).val();
+var notificationTypeSelection			= $( "#notificationTypeSelection" ).val();
+var periodEnd							= $( "#periodEnd" ).val();
+var periodStart							= $( "#periodStart" ).val();
+query = "";
+if ( eventGroupSelection == "single" )
+{
+query += "select events.timestamp, event_types.event_name, notification_types.notification_name, recipes.recipe_uuid, recipes.recipe_name, events.context ";
+}
+else if ( eventGroupSelection == "group" )
+{
+query += "select count(*) as amount, event_types.event_name, notification_types.notification_name ";
+}
+query += "from events "
++ "left join event_types on events.event_type_id = event_types.event_type_id "
++ "left join notification_types on events.notification_type_id = notification_types.notification_type_id "
++ "left join recipes on recipes.recipe_id = events.recipe_id ";
+query += "where date( timestamp ) <= '" + periodEnd + "' and date( timestamp ) >= '" + periodStart + "' ";
+if ( eventNotificationExclusionSelection == "all" )
+{
+// no added filter
+}
+else if ( eventNotificationExclusionSelection == "onlyNotifications" )
+{
+query += " and events.notification_type_id > 0 ";
+}
+else if ( eventNotificationExclusionSelection == "withoutNotifications" )
+{
+query += " and events.notification_type_id == 0 ";
+}
+if ( eventTypeSelection == "all" )
+{
+// no added filter
+}
+else
+{
+query += " and events.event_type_id == '" + eventTypeSelection + "' ";
+}
+if ( notificationTypeSelection == "all" )
+{
+// no added filter
+}
+else
+{
+query += " and events.notification_type_id == '" + notificationTypeSelection + "' ";
+}
+if ( eventGroupSelection == "single" )
+{
+query += "order by timestamp ";
+}
+else if ( eventGroupSelection == "group" )
+{
+query += "group by event_types.event_name, notification_types.notification_name ";
+}
+query += ";";
+var csvFile = "/storage/HemroEkOmniaEventStatistics.csv";
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo /usr/bin/sqlite3 /db_storage/EkxSqlite.db -csv -header -separator ';' \"" + query + "\" > " + csvFile,
+"sync"
+]
+};
+restApiCmd( false, "Event statistics", jsonCmd, processEventStatistics );
+}
+});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" colspan="2">Configure grind statistics</td>
+</tr>
+<tr>
+<td width="300px" class="tableDescriptorBold">Recipe mode</td>
+<td width="400px">
+<select name="recipeModeSelection" id="recipeModeSelection" class="redbutton" style="width:400px;">
+<option value="all" selected="selected">Don't care</option>
+</select>
+<script>
+function processRecipeModeSelection( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+for ( var i = 0; i < jsonResult.data.length; i++ )
+{
+$('#recipeModeSelection').append( $( '<option>', { value: jsonResult.data[i].key, text: jsonResult.data[i].value } ) );
+}
+}
+catch ( e )
+{
+}
+}
+$( "#recipeModeSelection" ).ready(	function()
+{
+var jsonCmd =
+{
+msgType : "RequestRecipeModes",
+};
+restApiCmd( false, "RequestRecipeModes", jsonCmd, processRecipeModeSelection );
+} );
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Recipe name</td>
+<td>
+<select name="recipeNameSelection" id="recipeNameSelection" class="redbutton" style="width:400px;">
+<option value="all" selected="selected">Don't care</option>
+</select>
+<script>
+function processRecipeNameSelection( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+for ( var i = 0; i < jsonResult.data.length; i++ )
+{
+$('#recipeNameSelection').append( $( '<option>', { value: jsonResult.data[i].key, text: jsonResult.data[i].value } ) );
+}
+}
+catch ( e )
+{
+}
+}
+$( "#recipeNameSelection" ).ready(	function()
+{
+var jsonCmd =
+{
+msgType : "RequestRecipeNames",
+};
+restApiCmd( false, "RequestRecipeNames", jsonCmd, processRecipeNameSelection );
+} );
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Grouping</td>
+<td>
+<select name="grindGroupSelection" id="grindGroupSelection" class="redbutton" style="width:400px;">
+<option value="single" selected="selected">List each single entry</option>
+<option value="group">Count same entries together</option>
+</select>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Process request</td>
+<td>
+<button class="blackbutton" id="downloadGrinds" style="width:400px;">Download .csv</button>
+<script>
+function processGrindStatistics( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.success )
+{
+window.location.href = "restApi?downloadGrindStatistics";
+}
+else
+{
+openPopup(	"Download grind statistics",
+"Error!<br>Query couldn't be executed!" );
+}
+}
+catch ( e )
+{
+openPopup(	"Download grind statistics",
+"Error!<br>Return object is not valid!");
+}
+}
+$( "#downloadGrinds" ).on( "click", function()
+{
+if ( $( "#periodStart" ).val() > $( "#periodEnd" ).val() )
+{
+openPopup( "Download grind statistics",
+"Error!<br>Start period date lays behind end period date.<br>Please correct period dates!" );
+}
+else
+{
+var query = "";
+var grindGroupSelection = $( "#grindGroupSelection" ).val();
+var recipeNameSelection = $( "#recipeNameSelection" ).val();
+var recipeModeSelection = $( "#recipeModeSelection" ).val();
+var periodEnd           = $( "#periodEnd" ).val();
+var periodStart         = $( "#periodStart" ).val();
+if ( grindGroupSelection == "single" )
+{
+query = "select grinds.timestamp, recipes.recipe_uuid, recipes.recipe_name, recipe_modes.recipe_mode_name, grinds.grind_time_100ths ";
+}
+else if ( grindGroupSelection == "group" )
+{
+query = "select count(1) as Amount, recipes.recipe_uuid, recipes.recipe_name, recipe_modes.recipe_mode_name, sum( grinds.grind_time_100ths ) ";
+}
+query += "from grinds "
++ "left join recipes on recipes.recipe_id = grinds.recipe_id "
++ "left join recipe_modes on recipes.recipe_mode_id = recipe_modes.recipe_mode_id ";
+query += "where date( timestamp ) <= '" + periodEnd + "' and date( timestamp ) >= '" + periodStart + "' ";
+if ( recipeModeSelection == "all" )
+{
+// no added filter
+}
+else
+{
+query += " and recipe_modes.recipe_mode_id == '" + recipeModeSelection + "' ";
+}
+if ( recipeNameSelection == "all" )
+{
+// no added filter
+}
+else
+{
+query += " and recipes.recipe_id == '" + recipeNameSelection + "' ";
+}
+if ( grindGroupSelection == "single" )
+{
+query += "order by timestamp ";
+}
+else if ( grindGroupSelection == "group" )
+{
+query += "group by recipes.recipe_uuid, recipes.recipe_name, recipe_modes.recipe_mode_name ";
+}
+query += ";";
+var csvFile = "/storage/HemroEkOmniaGrindStatistics.csv";
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo /usr/bin/sqlite3 /db_storage/EkxSqlite.db -csv -header -separator ';' \"" + query + "\" > " + csvFile,
+"sync"
+]
+};
+restApiCmd( false, "Grind statistics", jsonCmd, processGrindStatistics );
+}
+});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" colspan="2">Counters statistics</td>
+</tr>
+<tr>
+<td width="300px" class="tableDescriptorBold">Process request</td>
+<td width="400px">
+<button class="blackbutton" id="downloadCounters" style="width:400px;">Download .csv</button>
+<script>
+function processCountersStatistics( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.success )
+{
+window.location.href = "restApi?downloadCounterStatistics";
+}
+else
+{
+openPopup(	"Download counters statistics",
+"Error!<br>Query couldn't be executed!" );
+}
+}
+catch ( e )
+{
+openPopup(	"Download counters statistics",
+"Error!<br>Return object is not valid!");
+}
+}
+$( "#downloadCounters" ).on( "click", function()
+{
+var query = "select counter_name, value, unit_name from counters, units where counters.unit_id = units.unit_id order by counter_name;";
+var csvFile = "/storage/HemroEkOmniaCounterStatistics.csv";
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo /usr/bin/sqlite3 /db_storage/EkxSqlite.db -csv -header -separator ';' \"" + query + "\" > " + csvFile,
+"sync"
+]
+};
+restApiCmd( false, "Counters statistics", jsonCmd, processCountersStatistics );
+});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div data-include="includeFooter.html">Loading footer ...</div>
+</div>
+</div>
+<div data-include="includePopup.html">Loading popup ...</div>
+</body>
+</html>

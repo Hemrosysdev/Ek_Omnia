@@ -1,0 +1,13 @@
+[VersionId]
+Component=UiPresentation
+VersionNo=00.01
+VersionDate=18.10.2021
+DevState=Development
+
+[Source]
+Company=Ultratronik GmbH
+Location=Gilching, Germany
+Project=Hemro EKX
+
+[History]
+00.01=18.10.2021;Project initialization

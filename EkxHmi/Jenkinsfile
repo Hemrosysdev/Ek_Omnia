@@ -1,0 +1,130 @@
+def SDK_ARCHIVE	= "HEM-Hemro/HEM-EKX-HMI-S01.100/HEM-EKX-BSP.140/latest/sdk"
+def SDK_NAME	= "sdk_HEM_EKX.mmia7.140"
+def HMI_ARCHIVE	= "HEM-Hemro/HEM-EKX-S01/HEM-EKX-HMI-BSP-140"
+
+def UxChatNotify( String chan = '' )
+{
+	def COLOR_MAP = ['SUCCESS': 'good', 'FAILURE': 'danger', 'UNSTABLE': 'warning', 'ABORTED': '#808080']
+	def STATUS_MAP = ['SUCCESS': 'Success', 'FAILURE': 'Failed', 'UNSTABLE': 'Unstable', 'ABORTED': 'Aborted']
+	slackSend	channel: chan,
+				color: COLOR_MAP[currentBuild.currentResult],
+				message: "${env.JOB_NAME} - #${env.BUILD_NUMBER}: " + STATUS_MAP[currentBuild.currentResult] + " - <${env.BUILD_URL}|Open Jenkins Build>"
+}
+
+pipeline 
+{
+	agent any
+	triggers { pollSCM('H * * * *') }
+	options 
+	{
+		disableConcurrentBuilds()
+		buildDiscarder(	logRotator( artifactDaysToKeepStr: '', 
+									artifactNumToKeepStr: '10', 
+									daysToKeepStr: '60', 
+									numToKeepStr: '60' )
+						)
+	}
+
+	stages 
+	{
+		stage('Dependencies') 
+		{
+			steps 
+			{
+				rtDownload(	serverId: 'UX_ARTIFACTORY',
+							buildName: "HEM-EKX-HMI",
+							module: "SDK",
+							spec: """{"files": [{
+									"pattern": "dev-projects-snapshot/${SDK_ARCHIVE}/*",
+									"target": "./"
+									}]}"""
+						)
+				sh "mv ${SDK_ARCHIVE}/${SDK_NAME}.tgz ."
+			}
+		}
+		
+		stage('Build') 
+		{
+			agent
+			{
+				dockerfile 
+				{
+					reuseNode true
+				}
+			}
+			
+			steps 
+			{
+				sh "rm -rf build_*"
+				sh "rm -rf artefacts"
+				sh "rm -rf EkxHmiDemonstrator/DebianInstaller/*.deb"
+				
+				sh "mkdir -p build_EkxWsServer;cd build_EkxWsServer;BUILD_NO=${BUILD_NUMBER} make -f ../EkxWsServer/version.mk;/opt/${SDK_NAME}/bin/qmake ../EkxWsServer/EkxWsServer.pro;BUILD_NO=${BUILD_NUMBER} make -j8"
+				sh "mkdir -p build_EkxUI;cd build_EkxUI;BUILD_NO=${BUILD_NUMBER} make -f ../EkxUI/version.mk;/opt/${SDK_NAME}/bin/qmake ../EkxUI/EkxUI.pro;BUILD_NO=${BUILD_NUMBER} make -j8"
+				//sh "cd EkxHmiDemonstrator/DebianInstaller;BUILD_NO=${BUILD_NUMBER} ./build_install_package.sh"
+				
+				//sh "mkdir -p artefacts;cp EkxHmiDemonstrator/DebianInstaller/*.deb artefacts/"
+				sh "mkdir -p artefacts/EkxWsServer;cp build_EkxWsServer/EkxWsServer artefacts/EkxWsServer;cp build_EkxWsServer/EkxWsServerVersion.json artefacts/EkxWsServer;cd artefacts/EkxWsServer;tar -czvf ../EkxWsServer.tar.gz *;cd ..;rm -rf EkxWsServer"
+				sh "mkdir -p artefacts/EkxUI;cp build_EkxUI/EkxUI artefacts/EkxUI;cp build_EkxUI/EkxUIVersion.json artefacts/EkxUI;cd artefacts/EkxUI;tar -czvf ../EkxUI.tar.gz *;cd ..;rm -rf EkxUI"
+				sh "mkdir -p artefacts/McuFirmware;cp McuFirmware/*.bin artefacts/McuFirmware;cp McuFirmware/McuFirmwareConfig.json artefacts/McuFirmware;cd artefacts/McuFirmware;tar -czvf ../McuFirmware.tar.gz *;cd ..;rm -rf McuFirmware"
+				sh "mkdir -p artefacts/WebServerFiles;cp -r WebServerFiles/* artefacts/WebServerFiles;cd artefacts/WebServerFiles;rm -rf HelperFiles;tar -czvf ../WebServerFiles.tar.gz *;cd ..;rm -rf WebServerFiles"
+				sh "cp McuFirmware/McuConfig.json artefacts"
+				
+				sh "rm -rf build_*"
+			}
+		}
+
+		stage('Archive') 
+		{
+			steps 
+			{
+				archiveArtifacts artifacts: "artefacts/*", fingerprint: true, onlyIfSuccessful: true
+			}
+		}
+		
+		stage('Artifactory') 
+		{
+			when { branch "master" }
+			steps 
+			{
+				rtUpload(	serverId: 'UX_ARTIFACTORY',
+							buildName: "HEM-EKX-HMI",
+							module: "EkxUI",
+							spec: """{"files": [
+										{
+											"pattern": "artefacts/*",
+											"target": "dev-projects-snapshot/${HMI_ARCHIVE}/${BUILD_NUMBER}/"
+										}
+									]}"""
+						)
+						
+				rtUpload(	serverId: 'UX_ARTIFACTORY',
+							buildName: "HEM-EKX-HMI",
+							module: "EkxUI",
+							spec: """{"files": [
+												{
+													"pattern": "artefacts/*",
+													"target": "dev-projects-snapshot/${HMI_ARCHIVE}/latest/"
+												}
+												
+									]}"""
+						)
+						
+				rtPublishBuildInfo(	serverId: "UX_ARTIFACTORY",
+									buildName: "HEM-EKX-HMI"
+								)
+			}
+		}
+	}
+
+	post 
+	{
+		changed 
+		{
+			script 
+			{
+				UxChatNotify()
+			}
+		}
+	}
+}

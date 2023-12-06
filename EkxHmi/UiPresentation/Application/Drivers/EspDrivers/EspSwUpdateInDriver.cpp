@@ -1,0 +1,266 @@
+///////////////////////////////////////////////////////////////////////////////
+///
+/// @file EspSwUpdateInDriver.cpp
+///
+/// @brief main application entry point of EspSwUpdateInDriver.
+///
+/// @author Ultratronik GmbH
+///         Dornierstr. 9
+///         D-82205 Gilching
+///         Germany
+///         http://www.ultratronik.de
+///
+/// @author written by Florian Sonntag, Forschung & Entwicklung, gesser@ultratronik.de
+///
+/// @date 31.03.2021
+///
+/// @copyright Copyright 2021 by Hemro International AG
+///            Hemro International AG
+///            Länggenstrasse 34
+///            CH 8184 Bachenbülach
+///            Switzerland
+///            Homepage: www.hemrogroup.com
+///
+///////////////////////////////////////////////////////////////////////////////
+
+#include "EspSwUpdateInDriver.h"
+
+#include <QDebug>
+
+#include "EspSwUpdateIn.h"
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+EspSwUpdateInDriver::EspSwUpdateInDriver( QObject *parent )
+    : QObject( parent )
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+EspSwUpdateInDriver::~EspSwUpdateInDriver()
+{
+    disconnectInterface();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::connectInterface( EspSwUpdateIn * pEspSwUpdateIn )
+{
+    if ( m_pSwUpdateIn != pEspSwUpdateIn )
+    {
+        disconnectInterface();
+        m_pSwUpdateIn = pEspSwUpdateIn;
+
+        if ( m_pSwUpdateIn )
+        {
+            connect( m_pSwUpdateIn, &EspDataInterface::dataChanged, this, &EspSwUpdateInDriver::processDataChanged );
+            connect( m_pSwUpdateIn, &EspDataInterface::validChanged, this, &EspSwUpdateInDriver::processValidChanged );
+
+            setCommand( m_pSwUpdateIn->command() );
+            setSuccess( m_pSwUpdateIn->success());
+            setSwVersion( m_pSwUpdateIn->swVersionNo() );
+            setTransactionId( m_pSwUpdateIn->transactionId() );
+            setValid( m_pSwUpdateIn->isValid() );
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::disconnectInterface( )
+{
+    if ( m_pSwUpdateIn  )
+    {
+        m_pSwUpdateIn = nullptr;
+
+        // make it quite without signal
+        m_nCurrentTransactionId = 0;
+        m_nCommand = 0;
+        m_bSuccess = false;
+        m_bValid = false;
+        m_strSwVersion = "";
+
+        // now force update
+        emit validChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+int EspSwUpdateInDriver::transactionId() const
+{
+    return m_nCurrentTransactionId;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::setTransactionId(const int nTransactionId )
+{
+    if ( nTransactionId != m_nCurrentTransactionId )
+    {
+        m_nCurrentTransactionId = nTransactionId;
+
+        emit transactionIdChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+int EspSwUpdateInDriver::command() const
+{
+    return m_nCommand;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::setCommand(const int nCommand )
+{
+    if ( nCommand != m_nCommand )
+    {
+        m_nCommand = nCommand;
+
+        emit commandChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool EspSwUpdateInDriver::success() const
+{
+    return m_bSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::setSuccess(const bool bSuccess )
+{
+    if ( bSuccess != m_bSuccess )
+    {
+        m_bSuccess = bSuccess;
+
+        emit successChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool EspSwUpdateInDriver::isValid() const
+{
+    return m_bValid;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::setValid(const bool bValid )
+{
+    if ( bValid != m_bValid )
+    {
+        m_bValid = bValid;
+
+        emit validChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+QString EspSwUpdateInDriver::swVersion() const
+{
+    return m_strSwVersion;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::setSwVersion(const QString &strSwVersion )
+{
+    if ( strSwVersion != m_strSwVersion )
+    {
+        m_strSwVersion = strSwVersion;
+
+        emit swVersionChanged();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::processDataChanged( EspDataInterface * pData )
+{
+    EspSwUpdateIn * swUpdateIn = dynamic_cast<EspSwUpdateIn*>( pData );
+    if ( swUpdateIn )
+    {
+        setCommand( swUpdateIn->command() );
+        setSuccess( swUpdateIn->success() );
+        setSwVersion( swUpdateIn->swVersionNo() );
+        setValid( swUpdateIn->isValid() );
+
+        // take care to be the last data item changed
+        setTransactionId( swUpdateIn->transactionId() );
+
+        //qInfo() << "processEspSwUpdateInDataChanged cmd " << getCommand() << " tid " << getTransactionId();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void EspSwUpdateInDriver::processValidChanged( EspDataInterface * pData )
+{
+    EspSwUpdateIn * swUpdateIn = dynamic_cast<EspSwUpdateIn*>( pData );
+    if ( swUpdateIn )
+    {
+        setValid( swUpdateIn->isValid() );
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+

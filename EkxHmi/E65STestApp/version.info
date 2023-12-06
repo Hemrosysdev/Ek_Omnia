@@ -1,0 +1,13 @@
+[VersionId]
+Component=E65STestApp
+VersionNo=00.01
+VersionDate=12.10.2021
+DevState=Development
+
+[Source]
+Company=Ultratronik GmbH
+Location=Gilching, Germany
+Project=Hemro E65S-GbW
+
+[History]
+00.01=12.10.2021;Project initialization

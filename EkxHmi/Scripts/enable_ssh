@@ -1,0 +1,6 @@
+#!/bin/sh
+
+unlockrfs
+echo -n "o" > /tmp/dropbear
+cat /etc/default/dropbear >> /tmp/dropbear
+cp /tmp/dropbear /etc/default/dropbear

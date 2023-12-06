@@ -1,0 +1,62 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/Error-Heat-40px.png</file>
+        <file>Icons/ICON-Strokes_Add-40px_white.png</file>
+        <file>Icons/ICON-Strokes_Back-72px_white.png</file>
+        <file>Icons/ICON-Strokes_Bottomless-80px_portafilter_white.png</file>
+        <file>Icons/ICON-Strokes_Close-72px_white.png</file>
+        <file>Icons/ICON-Strokes_confirm-72px_white.png</file>
+        <file>Icons/ICON-Strokes_Customize-112px_white.png</file>
+        <file>Icons/ICON-Strokes_DDD-112px_white.png</file>
+        <file>Icons/ICON-Strokes_DiscDistance-32px_white.png</file>
+        <file>Icons/ICON-Strokes_DiscDistance-32px_white_50%.png</file>
+        <file>Icons/ICON-Strokes_Double-80px_portafilter_white.png</file>
+        <file>Icons/ICON-Strokes_Double-V2-80px_Filter_white.png</file>
+        <file>Icons/ICON-Strokes_Double-V2-80px_Filter_white_transparent.png</file>
+        <file>Icons/ICON-Strokes_Edit-98px_white.png</file>
+        <file>Icons/ICON-Strokes_Notifications-112px_white.png</file>
+        <file>Icons/ICON-Strokes_Settings-112px_white.png</file>
+        <file>Icons/ICON-Strokes_Single-80px_Cup_white.png</file>
+        <file>Icons/ICON-Strokes_Single-80px_Filter_white.png</file>
+        <file>Icons/ICON-Strokes_Single-80px_Filter_white_transparent.png</file>
+        <file>Icons/ICON-Strokes_Single-80px_portafilter_white.png</file>
+        <file>Icons/ICON-Strokes_Time-32px_white_50%.png</file>
+        <file>Icons/ICON-Strokes_Timer-30px_white_50%.png</file>
+        <file>Icons/ICON-Strokes_Trashcan-98px_white.png</file>
+        <file>Icons/ICON-Strokes_User-MGMT-112px_white.png</file>
+        <file>Icons/ICON-Strokes_Warning-80px_orange.png</file>
+        <file>Icons/ICON_Add-40px_white.png</file>
+        <file>Icons/ICON_Bottomless-80px_pf_transparent.png</file>
+        <file>Icons/ICON_Confirm-72px_white_transparent.png</file>
+        <file>Icons/ICON_Delete-72px_white.png</file>
+        <file>Icons/ICON_DiscDistance-56px_white 50%.png</file>
+        <file>Icons/ICON_DiscDistance-72px_white 50%.png</file>
+        <file>Icons/ICON_Double-80px_pf_transparent.png</file>
+        <file>Icons/ICON_Edit-72px_transparent.png</file>
+        <file>Icons/ICON_Heat-40px.png</file>
+        <file>Icons/ICON_Minus-40px_white.png</file>
+        <file>Icons/ICON_Single-80px_Cup_transparent.png</file>
+        <file>Icons/ICON_Single-80px_pf_transparent.png</file>
+        <file>Icons/ICON_Timer-56px_white 50%.png</file>
+        <file>Icons/ICON_Trashcan-72px_transparent.png</file>
+        <file>Icons/ICON_Trashcan-72px_white.png</file>
+        <file>Icons/redArrowlo.png</file>
+        <file>Icons/settings_indicator.png</file>
+        <file>Icons/ICON_Edit-72px_white.png</file>
+        <file>Icons/PeriodSelector-72px_white.png</file>
+        <file>Icons/ICON_Indicator-72px_active.png</file>
+        <file>Icons/ICON_Toggle-72px_active.png</file>
+        <file>Icons/ICON_Toggle-72px_deactive.png</file>
+        <file>Icons/ICON_Indicator-72px_deactive.png</file>
+        <file>Icons/EKX_Loading.gif</file>
+        <file>Fonts/D-DINCondensedHEMRO-Bold.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Bold_Mono.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Bold_Mono_Numbers.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Light_Numbers.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Regular.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Regular_Mono.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Regular_Mono_Numbers.otf</file>
+        <file>Fonts/D-DINCondensedHEMRO-Light_Mono_Numbers.otf</file>
+        <file>QmlComponents/E65STestApp.qml</file>
+    </qresource>
+</RCC>

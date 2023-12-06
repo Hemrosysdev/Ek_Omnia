@@ -1,0 +1,6 @@
+ACTION!="add", SUBSYSTEM!="usb", GOTO="kcontrol_rules_end"
+
+ATTRS{idProduct}=="0101", ATTRS{idVendor}=="1366", MODE="664", GROUP="plugdev"
+
+LABEL="kcontrol_rules_end"
+

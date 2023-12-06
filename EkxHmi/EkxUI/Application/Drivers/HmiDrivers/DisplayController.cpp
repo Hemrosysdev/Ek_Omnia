@@ -1,0 +1,207 @@
+///////////////////////////////////////////////////////////////////////////////
+///
+/// @file DisplayController.cpp
+///
+/// @brief Class encapsulates the display control as a QtObject
+///
+/// @author Ultratronik GmbH
+///         Dornierstr. 9
+///         D-82205 Gilching
+///         Germany
+///         http://www.ultratronik.de
+///
+/// @author written by Xaver Pilz, Forschung & Entwicklung, xpilz@ultratronik.de
+///
+/// @date 04.02.2021
+///
+/// @copyright Copyright 2021 by Hemro International AG
+///            Hemro International AG
+///            Länggenstrasse 34
+///            CH 8184 Bachenbülach
+///            Switzerland
+///            Homepage: www.hemrogroup.com
+///
+///////////////////////////////////////////////////////////////////////////////
+
+#include "DisplayController.h"
+
+#include <math.h>
+
+#include <QDebug>
+#include <QFile>
+
+#include "MainStatemachine.h"
+
+#define BRIGHTNESS_DEVICEFILE_PATH     "/sys/class/backlight/backlight/brightness"
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+DisplayController::DisplayController( QObject * pParent )
+    : QObject( pParent )
+{
+    MainStatemachine::ensureExistingDirectory( MainStatemachine::rootPath() + BRIGHTNESS_DEVICEFILE_PATH );
+
+    updateBrightness();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+DisplayController::~DisplayController()
+{
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+int DisplayController::brightness() const
+{
+    return m_nBrightness;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::setBrightness( const int brightness )
+{
+    int newBrightness = brightness;
+    newBrightness = std::min( newBrightness, c_nMaxBrightness );
+    newBrightness = std::max( newBrightness, c_nMinBrightness );
+
+    if ( m_nBrightness != newBrightness )
+    {
+        m_nBrightness = newBrightness;
+        emit brightnessChanged();
+        updateBrightness();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+bool DisplayController::brightnessEnable( void ) const
+{
+    return m_brightnessEnable;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+int DisplayController::minBrightness() const
+{
+    return c_nMinBrightness;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+int DisplayController::maxBrightness() const
+{
+    return c_nMaxBrightness;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::setBrightnessEnable( const bool brightnessEnable )
+{
+    if ( m_brightnessEnable != brightnessEnable )
+    {
+        m_brightnessEnable = brightnessEnable;
+        emit brightnessEnableChanged();
+        updateBrightness();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::setBrightnessDisable( const bool brightnessDisable )
+{
+    setBrightnessEnable( !brightnessDisable );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::setDimmedBrightnessEnable( const bool enable )
+{
+    if ( m_dimmedBrightnessEnable != enable )
+    {
+        m_dimmedBrightnessEnable = enable;
+        emit dimmedBrightnessEnableChanged();
+        updateBrightness();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::updateBrightness()
+{
+    if ( !m_brightnessEnable )
+    {
+        applyBrightnessSystemValue( 0 );
+    }
+    else if ( m_dimmedBrightnessEnable )
+    {
+        applyBrightnessSystemValue( std::max( c_nMinBrightness, m_nBrightness - 1 ) );
+    }
+    else
+    {
+        applyBrightnessSystemValue( m_nBrightness );
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+
+void DisplayController::applyBrightnessSystemValue( int brightnessSystemvalue )
+{
+    QString fileName = MainStatemachine::rootPath() + BRIGHTNESS_DEVICEFILE_PATH;
+    QFile   file( fileName );
+
+    if ( file.open( QIODevice::ReadWrite ) )
+    {
+        QTextStream out( &file );
+        out << brightnessSystemvalue;
+        file.flush();
+        file.close();
+    }
+    else
+    {
+        qCritical() << "DisplayController::applyBrightnessSystemValue(" << brightnessSystemvalue << ") cannot open file " << fileName;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//
+///////////////////////////////////////////////////////////////////////////////
+

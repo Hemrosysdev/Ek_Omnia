@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ICON/Checkmark-72px/white</title>
+    <g id="ICON/Checkmark-72px/white" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M53.5,30 L53.5,30 L53.5,49.5 C53.5,51.709139 51.709139,53.5 49.5,53.5 L22.5,53.5 C20.290861,53.5 18.5,51.709139 18.5,49.5 L18.5,22.5 C18.5,20.290861 20.290861,18.5 22.5,18.5 L42,18.5 L42,18.5" id="Path" stroke="#FFFFFF" stroke-width="3" opacity="0.25" stroke-linecap="round"></path>
+        <polyline id="Path-25" stroke="#FFFFFF" stroke-width="3" points="25 30 38 43 53 15"></polyline>
+    </g>
+</svg>

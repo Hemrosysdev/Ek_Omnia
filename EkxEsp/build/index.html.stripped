@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hemro EKX Web Interface</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="css/style.css?ver=ekx_1" />
+<script src="js/zepto.min.js"></script>
+<script src="js/aliveCheck.js?ver=ekx_1"></script>
+<script src="js/popupManagement.js?ver=ekx_1"></script>
+<script src="js/commonHelpers.js?ver=ekx_1"></script>
+<script src="js/firmwareUpdateObserver.js?ver=ekx_1"></script>
+<script type="text/javascript">
+var lastPercent = -10;
+var firmwareUpdateFile = null;
+var fileUploadXhr = null;
+var statusIntervalId = null;
+var customSplashScreenExisting = false;
+/********************************************************************************/
+$( document ).ready(	function()
+{
+statusIntervalId = setInterval( requestSystemStatus, 5000 );
+requestSystemStatus();
+} );
+/********************************************************************************/
+function updateCustomSplashScreen( existing )
+{
+if ( customSplashScreenExisting != existing )
+{
+customSplashScreenExisting = existing;
+var showSplashScreen = document.getElementById( "show_splash_screen" );
+var imageSplashScreen = document.getElementById( "image_splash_screen" );
+if ( customSplashScreenExisting )
+{
+showSplashScreen.style.display = "block";
+imageSplashScreen.style.display = "block";
+imageSplashScreen.src = "custom-splash-screen";
+}
+else
+{
+showSplashScreen.style.display = "none";
+imageSplashScreen.style.display = "none";
+imageSplashScreen.src = "";
+}
+}
+}
+/********************************************************************************/
+function processSystemStatus( result )
+{
+var jsonResult = null;
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.refMsgType == "RequestSystemStatus" )
+{
+$( "#hmiSerialNumber" ).text( jsonResult.data.hmiSerialNo );
+$( "#hmiTime" ).val( jsonResult.data.time );
+$( "#activeRfsPartition" ).text( jsonResult.data.activeRfsPartition );
+$( "#activeAppPartition" ).text( jsonResult.data.activeAppPartition );
+$( "#mcuCheckEnabled" ).text( jsonResult.data.mcuIgnored ? "disabled" : "enabled" );
+updateCustomSplashScreen( jsonResult.data.customSplashScreenExisting );
+}
+}
+catch ( e )
+{
+}
+}
+/********************************************************************************/
+function requestSystemStatus()
+{
+var jsonCmd =
+{
+msgType : "RequestSystemStatus",
+};
+restApiCmd( false, "RequestSystemStatus", jsonCmd, processSystemStatus );
+}
+/********************************************************************************/
+function handleSplashScreenUpload()
+{
+const uploadUrl='restApi?uploadSplashScreenImage';
+var file = $('#splash_file_select').get(0).files[0];
+fileUploadXhr = $.ajax(
+{
+url:          uploadUrl,
+type:        'POST',
+dataType:    'binary',
+data:        file,
+processData: false,
+contentType: false,
+responseType: 'json',
+xhr:
+function()
+{
+var xhr = $.ajaxSettings.xhr();
+return xhr;
+},
+beforeSend:
+function()
+{
+setAliveInterval( 30 * 60 * 1000 );  // 30 minutes
+clearInterval( statusIntervalId );
+},
+success:
+function(result)
+{
+openConfirmPopup( "Splash Screen Upload", "Upload succeded!" );
+disableConfirmPopupCancel();
+enableConfirmPopupOk( closeConfirmPopup );
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo mv /storage/upload.file /config/custom-splash-screen",
+"sudo /etc/init.d/S01splashscreen restart"
+]
+};
+restApiCmd( false, "Start Firmware Update", jsonCmd, requestSystemStatus );
+},
+error:
+function(result)
+{
+openConfirmPopup( "Splash Screen Upload", "Upload failed!" );
+disableConfirmPopupOk();
+},
+complete:
+function(result)
+{
+setAliveInterval( 1000 );
+statusIntervalId = setInterval( requestSystemStatus, 5000 );
+requestSystemStatus();
+}
+});
+}
+/********************************************************************************/
+function handleFirmwareUpload()
+{
+openPopup( "Firmware upload", false );
+enablePopupCancel();
+showProgressInfo( "Start file upload ...<br>" + firmwareUpdateFile.name );
+showProgressBar( "0%" );
+stateTimeoutId = setTimeout( firmwareUpdateTimeout, 20 * 60 * 1000 );  // 20 minutes
+const uploadUrl='restApi?uploadSwu';
+var file = $('#swu_file_select').get(0).files[0];
+var dataForm = new FormData();
+dataForm.append( 'swuFile', file );
+var startDate = new Date();
+fileUploadXhr = $.ajax({
+url:          uploadUrl,
+type:        'POST',
+dataType:    'binary',
+data:        file,
+processData: false,
+contentType: false,
+responseType: 'json',
+xhr:
+function()
+{
+var xhr = $.ajaxSettings.xhr();
+xhr.upload.onprogress = function(evt)
+{
+if ( evt.lengthComputable )
+{
+var progress = Math.ceil( evt.loaded * 100.0 / evt.total * 10.0 ) / 10.0 + "%";
+showProgressBar( progress );
+forceConfirmAlive();
+var currentDate = new Date();
+var diffSeconds = ( currentDate - startDate ) / 1000;
+if ( evt.loaded > 0 )
+{
+var restSeconds = Math.floor( ( evt.total - evt.loaded ) / evt.loaded * diffSeconds );
+setPopupEta( "Time to go: " + Math.floor( restSeconds / 60 ) + "min " + restSeconds % 60 + "sec" );
+}
+}
+};
+return xhr;
+},
+beforeSend:
+function()
+{
+setAliveInterval( 20 * 60 * 1000 );  // 20 minutes
+clearInterval( statusIntervalId );
+},
+success:
+function(result)
+{
+showProgressInfo( "Upload succeded!<br>Try to start update process on device now ..." );
+var jsonCmd =
+{
+msgType : "StartFirmwareUpdate",
+swuFile : "upload.file"
+};
+restApiCmd( false, "Start Firmware Update", jsonCmd, processFirmwareUpdateStarted );
+},
+error:
+function(result)
+{
+closePopup();
+openConfirmPopup( "Firmware upload", "Upload failed!" );
+disableConfirmPopupOk();
+},
+complete:
+function(result)
+{
+clearInterval( stateTimeoutId );
+setAliveInterval( 1000 );
+statusIntervalId = setInterval( requestSystemStatus, 5000 );
+}
+});
+document.addEventListener(	"eventClosePopup",
+(e) =>
+{
+if ( fileUploadXhr )
+{
+fileUploadXhr.abort();
+fileUploadXhr = null;
+}
+firmwareUpdateAbort();
+},
+false );
+}
+/********************************************************************************/
+function processFirmwareUpdateStarted( result )
+{
+try
+{
+jsonResult = JSON.parse( result );
+if ( jsonResult.success == true )
+{
+showProgressInfo( "Firmware update started on device now ..." );
+stateIntervalId = setInterval( firmwareUpdateObserver, 500 );
+}
+else
+{
+showNormalLog( "<font color=red>Failed to start firmware update after upload!<br>Reason: " + jsonResult.data + "</font>" );
+hideProgressBar();
+}
+}
+catch ( e )
+{
+showNormalLog( "<font color=red>Failed to start fimware update after upload!<br>Reason: Receive illegal reply.</font>" );
+hideProgressBar();
+}
+}
+/********************************************************************************/
+</script>
+</head>
+<body>
+<div style="width:100%;padding:0;">
+<div data-include="includeHeader.html">Loading header ...</div>
+<div data-include="includeNoJavascript.html">Loading no javascript ...</div>
+<div id="infoBackground" style="width:100%;color:black;background-color:#f7f7f7;margin:auto;float:left;">
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" width="308px">System statistics</td>
+<td width="240">
+<button class="redbutton" id="configureStatistics">Configure</button>
+<script>
+$( "#configureStatistics" ).on( "click", function()
+{
+window.open( "statistics.html", "_self" );
+});
+</script>
+</td>
+<td width="160">
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">
+Database
+</td>
+<td>
+<button class="redbutton" id="downloadDatabase">Download</button>
+<script>
+$( "#downloadDatabase" ).on( "click", function()
+{
+window.location.href = "restApi?downloadDatabase";
+});
+</script>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Start MCU update</td>
+<td>
+<button class="redbutton" id="setMcuUpdateState">Start</button>
+<script>
+$( "#setMcuUpdateState" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "SetSoftwareUpdateStatus",
+data :
+{
+Process : "Normal",
+State : "MCU_UPDATE_IN_PROGRESS"
+}
+};
+restApiCmd( true, "Start MCU Update", jsonCmd );
+});
+</script>
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Start ESP update</td>
+<td>
+<button class="redbutton" id="setEspUpdateState">Start</button>
+<script>
+$( "#setEspUpdateState" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "SetSoftwareUpdateStatus",
+data :
+{
+Process : "Normal",
+State : "ESP_UPDATE_IN_PROGRESS"
+}
+};
+restApiCmd( true, "Start ESP Update", jsonCmd );
+});
+</script>
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div data-include="includeDevOptions.html">Loading options ...</div>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" width="308px">Firmware update</td>
+<td width="240">&nbsp;</td>
+<td width="160">&nbsp;</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">1. Please select<br/>HEM-EKX-S01...swu<br/>firmware file</td>
+<td colspan="2">
+<input class="redbutton" id="swu_file_select" name="File" type="file" size="50" accept=".swu,application/octet-stream" hidden/>
+<button class="redbutton" id="swu_file_select_shadow">Select file</button>
+<script>
+$( "#swu_file_select_shadow" ).on( "click", function()
+{
+$( "#swu_file_select" ).click();
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">2. Chosen file</td>
+<td colspan="2" class="tableDescriptorSmallBold">
+<div id="fileChosen">No file chosen</div>
+<script>
+document.getElementById( "swu_file_select" ).addEventListener( 'change', function()
+{
+document.getElementById( "fileChosen" ).innerHTML = this.files[0].name;
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">3. Perform upload &amp; install</td>
+<td colspan="2">
+<button class="redbutton" id="upload" disabled>Upload File</button></br>
+<script>
+document.getElementById( "swu_file_select" ).addEventListener( 'change', function()
+{
+document.getElementById( "upload" ).disabled = false;
+firmwareUpdateFile = this.files[0];
+});
+$( "#upload" ).on( "click", function()
+{
+handleFirmwareUpload();
+});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div class="infoRegion" >
+<table class="infoTable">
+<tr>
+<td class="tableDescriptorBold" width="308px">Custom Splash-Screen upload</td>
+<td width="400" colspan="2">
+<div id="show_splash_screen" style="display:none;width:120px;height:90px;background-color: black;">
+<img id="image_splash_screen" src="" style="position:relative;top:50%;left:50%;transform: translate(-50%, -50%);width:25%;" />
+</div>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">1. Please select any image file</td>
+<td>
+<input class="redbutton" id="splash_file_select" name="File" type="file" size="50" accept=".jpeg .jpg .png .gif,image/*" hidden/>
+<button class="redbutton" id="splash_file_select_shadow">Select file</button>
+<script>
+$( "#splash_file_select_shadow" ).on( "click", function()
+{
+$( "#splash_file_select" ).click();
+});
+</script>
+</td>
+<td class="tableDescriptorNormal">Size: max. 480x360px</br>Format: jpg/png/gif
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">2. Chosen file</td>
+<td colspan="2" class="tableDescriptorSmallBold">
+<div id="splashFileChosen">No file chosen</div>
+<script>
+document.getElementById( "splash_file_select" ).addEventListener( 'change', function()
+{
+document.getElementById( "splashFileChosen" ).innerHTML = this.files[0].name;
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorNormal">3. Perform upload</td>
+<td colspan="2">
+<button class="redbutton" id="splash_upload" disabled>Upload File</button></br>
+<script>
+document.getElementById( "splash_file_select" ).addEventListener( 'change', function()
+{
+document.getElementById( "splash_upload" ).disabled = false;
+firmwareUpdateFile = this.files[0];
+});
+$( "#splash_upload" ).on( "click", function()
+{
+handleSplashScreenUpload();
+});
+</script>
+</td>
+</tr>
+<tr>
+<td class="tableDescriptorBold">Remove custom splash screen</td>
+<td colspan="2">
+<button class="redbutton" id="removeSplashScreen">Remove</button>
+<script>
+$( "#removeSplashScreen" ).on( "click", function()
+{
+var jsonCmd =
+{
+msgType : "ExecuteSysCommands",
+sysCommands :
+[
+"sudo rm -f /config/custom-splash-screen",
+"sudo /etc/init.d/S01splashscreen restart"
+]
+};
+restApiCmd( true, "Remove custom splash-screen image", jsonCmd, requestSystemStatus );
+});
+</script>
+</td>
+</tr>
+</table>
+</div>
+<p>&nbsp;</p>
+<div data-include="includeFooter.html">Loading footer ...</div>
+</div>
+</div>
+<div data-include="includePopup.html">Loading popup ...</div>
+</body>
+</html>
